@@ -6,13 +6,15 @@ import 'package:ui/ui.dart';
 
 import 'dependencies.dart';
 import 'router.dart';
+import 'theme_mode.dart';
 
 class JoblyApp extends StatefulWidget {
-  const JoblyApp({super.key, required this.dependencies});
+  const JoblyApp({super.key, required this.dependencies, this.themeMode = ThemeMode.system});
 
   static const locale = Locale.fromSubtags(languageCode: 'sr', scriptCode: 'Latn');
 
   final AppDependencies dependencies;
+  final ThemeMode themeMode;
 
   @override
   State<JoblyApp> createState() => _JoblyAppState();
@@ -31,19 +33,25 @@ class _JoblyAppState extends State<JoblyApp> {
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
       value: widget.dependencies,
-      child: MaterialApp.router(
-        title: 'Jobly',
-        theme: JoblyTheme.light(),
-        darkTheme: JoblyTheme.dark(),
-        themeMode: ThemeMode.system,
-        locale: JoblyApp.locale,
-        supportedLocales: const [JoblyApp.locale],
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        routerConfig: _router,
+      child: BlocProvider(
+        create: (_) => ThemeModeCubit(widget.themeMode),
+        child: BlocBuilder<ThemeModeCubit, ThemeMode>(
+          builder: (context, themeMode) => MaterialApp.router(
+            title: 'Jobly',
+            debugShowCheckedModeBanner: false,
+            theme: JoblyTheme.light(),
+            darkTheme: JoblyTheme.dark(),
+            themeMode: themeMode,
+            locale: JoblyApp.locale,
+            supportedLocales: const [JoblyApp.locale],
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            routerConfig: _router,
+          ),
+        ),
       ),
     );
   }

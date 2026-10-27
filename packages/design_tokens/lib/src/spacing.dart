@@ -12,4 +12,5 @@ abstract final class Radii {
   static const md = 10.0;
   static const lg = 14.0;
   static const xl = 20.0;
+  static const xxl = 28.0;
 }
