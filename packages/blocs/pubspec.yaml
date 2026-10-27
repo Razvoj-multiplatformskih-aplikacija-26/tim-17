@@ -1,0 +1,20 @@
+name: blocs
+description: Jobly stanje ekrana za sve Flutter klijente, nad package:bloc bez Fluttera.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.0
+resolution: workspace
+
+dependencies:
+  bloc: 9.2.1
+  domain:
+    path: ../domain
+  equatable: 3.0.0
+  use_cases:
+    path: ../use_cases
+
+dev_dependencies:
+  bloc_test: 10.0.0
+  test: 1.31.1

@@ -1,0 +1,18 @@
+name: jobly_workspace
+description: Jobly, sistem za studentske poslove. Workspace razrešava sve aplikacije i pakete zajedno.
+publish_to: none
+
+environment:
+  sdk: ^3.13.0
+
+workspace:
+  - apps/mobile
+  - apps/backoffice
+  - packages/domain
+  - packages/use_cases
+  - packages/blocs
+  - packages/ui
+  - packages/design_tokens
+
+dev_dependencies:
+  flutter_lints: 6.0.0

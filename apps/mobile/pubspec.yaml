@@ -1,0 +1,33 @@
+name: mobile
+description: Jobly aplikacija za studente koji traže poslove i šalju prijave.
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.0
+resolution: workspace
+
+dependencies:
+  blocs:
+    path: ../../packages/blocs
+  domain:
+    path: ../../packages/domain
+  flutter:
+    sdk: flutter
+  flutter_bloc: 9.1.1
+  flutter_localizations:
+    sdk: flutter
+  go_router: 18.0.2
+  intl: 0.20.3
+  ui:
+    path: ../../packages/ui
+  use_cases:
+    path: ../../packages/use_cases
+
+dev_dependencies:
+  flutter_lints: 6.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

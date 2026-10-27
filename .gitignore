@@ -1,0 +1,30 @@
+# Dart and Flutter
+.dart_tool/
+.packages
+build/
+*.g.dart.bak
+pubspec_overrides.yaml
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+
+# Flutter version management
+.fvm/
+
+# Local configuration and secrets
+.env
+*.jks
+*.keystore
+key.properties
+*.p12
+*.pem
+*.mobileprovision
+
+# Logs and test output
+*.log
+coverage/

@@ -1,0 +1,6 @@
+analyzer:
+  exclude:
+    - build/**
+    - web/**
+    - windows/**
+include: ../../analysis_options.yaml

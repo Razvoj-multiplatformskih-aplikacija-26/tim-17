@@ -1,0 +1,16 @@
+name: use_cases
+description: Jobly slučajevi korišćenja i portovi preko kojih stižu do platforme.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.0
+resolution: workspace
+
+dependencies:
+  collection: 1.19.1
+  domain:
+    path: ../domain
+
+dev_dependencies:
+  test: 1.31.1
