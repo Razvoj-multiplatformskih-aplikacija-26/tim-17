@@ -110,7 +110,6 @@ final class ColorTokens {
   final int inversePrimary;
 }
 
-/// Boje koje Material šema nema: gradijent brenda, ispune kontrola i zamućene trake.
 final class JoblyTokens {
   const JoblyTokens({
     required this.gradient,
@@ -143,14 +142,34 @@ final class JoblyTokens {
 
   final List<int> gradient;
 
-  /// Ispuna pretrage i neizabranih pilula.
   final int fill;
   final int separator;
 
-  /// Izabrana pilula je obrnuta: crna u svetloj, bela u tamnoj temi.
   final int selected;
   final int onSelected;
 
-  /// Poluprovidna pozadina zamućenih traka.
   final int bar;
+}
+
+final class StatusTokens {
+  const StatusTokens({required this.pending, required this.accepted, required this.rejected, required this.completed});
+
+  static const light = StatusTokens(
+    pending: 0xFFD97706,
+    accepted: 0xFF16A34A,
+    rejected: 0xFFDC2626,
+    completed: 0xFF4F6BFF,
+  );
+
+  static const dark = StatusTokens(
+    pending: 0xFFFFB340,
+    accepted: 0xFF30D158,
+    rejected: 0xFFFF6961,
+    completed: 0xFF7A9BFF,
+  );
+
+  final int pending;
+  final int accepted;
+  final int rejected;
+  final int completed;
 }

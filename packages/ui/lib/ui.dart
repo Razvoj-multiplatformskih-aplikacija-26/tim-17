@@ -5,5 +5,7 @@ export 'src/theme.dart';
 export 'src/widgets/chips.dart';
 export 'src/widgets/frosted.dart';
 export 'src/widgets/gradient_button.dart';
+export 'src/widgets/initials_avatar.dart';
 export 'src/widgets/jobly_wordmark.dart';
 export 'src/widgets/state_views.dart';
+export 'src/widgets/status_badge.dart';

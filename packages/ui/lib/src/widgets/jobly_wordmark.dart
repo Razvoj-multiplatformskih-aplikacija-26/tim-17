@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../jobly_colors.dart';
 
-/// Bilo koji widget obojen gradijentom brenda.
 class GradientMask extends StatelessWidget {
   const GradientMask({super.key, required this.child});
 
@@ -11,20 +10,21 @@ class GradientMask extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gradient = Theme.of(context).jobly.gradient;
-    // Sadržaj ispod maske dobija srednju boju gradijenta, da ivice slova ne provejavaju belo ili crno.
     final middle = gradient.colors[gradient.colors.length ~/ 2];
     return ShaderMask(
       blendMode: BlendMode.srcIn,
       shaderCallback: (bounds) => gradient.createShader(Offset.zero & bounds.size),
       child: DefaultTextStyle.merge(
         style: TextStyle(color: middle),
-        child: IconTheme.merge(data: IconThemeData(color: middle), child: child),
+        child: IconTheme.merge(
+          data: IconThemeData(color: middle),
+          child: child,
+        ),
       ),
     );
   }
 }
 
-/// Logotip „jobly“ ispisan gradijentom brenda.
 class JoblyWordmark extends StatelessWidget {
   const JoblyWordmark({super.key, this.size = 28});
 

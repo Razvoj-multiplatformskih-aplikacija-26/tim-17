@@ -4,7 +4,6 @@ import 'package:ui/ui.dart';
 
 import '../widgets/top_bar.dart';
 
-// Stanja prijave iz README-ja; kad stigne domenski model, ovaj spisak dolazi odande.
 const _statusTabs = ['Sve', 'Na čekanju', 'Prihvaćene', 'Odbijene', 'Završene', 'Povučene'];
 
 class MyApplicationsScreen extends StatefulWidget {

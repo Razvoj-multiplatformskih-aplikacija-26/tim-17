@@ -243,7 +243,6 @@ class _SortSheet extends StatelessWidget {
   }
 }
 
-/// Zaglavlje panela kao na iOS-u: „Poništi“ levo, naslov u sredini, „Gotovo“ desno.
 class _SheetHeader extends StatelessWidget {
   const _SheetHeader({required this.title, required this.onReset, required this.onDone});
 
@@ -272,7 +271,6 @@ class _SheetHeader extends StatelessWidget {
   }
 }
 
-/// Grupisana lista sa zaobljenim uglovima i tankim linijama između redova.
 class _GroupedList extends StatelessWidget {
   const _GroupedList({required this.children});
 

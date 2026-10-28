@@ -3,7 +3,6 @@ import 'package:ui/ui.dart';
 
 import '../models/job_filters.dart';
 
-/// Kategorije kao Instagram „stories“: izabrana dobija prsten u boji brenda.
 class CategoryStories extends StatelessWidget {
   const CategoryStories({super.key, required this.selected, required this.onToggle});
 

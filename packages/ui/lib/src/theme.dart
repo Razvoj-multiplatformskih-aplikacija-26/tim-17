@@ -124,13 +124,21 @@ abstract final class JoblyTheme {
         trackHeight: 4,
         tickMarkShape: SliderTickMarkShape.noTickMark,
       ),
+      checkboxTheme: CheckboxThemeData(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+        side: BorderSide(color: scheme.outline, width: 1.5),
+      ),
+      tooltipTheme: TooltipThemeData(
+        waitDuration: const Duration(milliseconds: 400),
+        decoration: BoxDecoration(color: scheme.inverseSurface, borderRadius: BorderRadius.circular(8)),
+        textStyle: textTheme.bodySmall?.copyWith(color: scheme.onInverseSurface),
+      ),
       dividerTheme: DividerThemeData(color: jobly.separator, thickness: 0.5, space: 0.5),
       focusColor: scheme.primary.withValues(alpha: 0.16),
       extensions: [jobly],
     );
   }
 
-  // Veličine i težine po uzoru na iOS tipografiju.
   static TextTheme _textTheme(TextTheme t) => t.copyWith(
     displaySmall: t.displaySmall?.copyWith(fontSize: 34, fontWeight: FontWeight.w700, letterSpacing: -0.8, height: 1.1),
     headlineMedium: t.headlineMedium?.copyWith(fontSize: 28, fontWeight: FontWeight.w700, letterSpacing: -0.6),

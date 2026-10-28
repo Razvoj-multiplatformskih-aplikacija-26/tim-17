@@ -4,13 +4,11 @@ import 'package:flutter/material.dart';
 
 import '../jobly_colors.dart';
 
-/// Poluprovidna zamućena pozadina, kao trake na iOS-u.
 class Frosted extends StatelessWidget {
   const Frosted({super.key, required this.child, this.top = false, this.bottom = false});
 
   final Widget child;
 
-  /// Tanka linija iznad, odnosno ispod sadržaja.
   final bool top;
   final bool bottom;
 

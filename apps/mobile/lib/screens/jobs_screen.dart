@@ -18,7 +18,6 @@ class _JobsScreenState extends State<JobsScreen> {
   final _search = TextEditingController();
   JobFilters _filters = const JobFilters();
 
-  // Oglasi stižu sa repozitorijumom; do tada je lista prazna.
   static const _jobCount = 0;
 
   @override

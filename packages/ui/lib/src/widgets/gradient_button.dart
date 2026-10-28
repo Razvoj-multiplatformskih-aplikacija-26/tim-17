@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../jobly_colors.dart';
 
-/// Glavno dugme ekrana, obojeno gradijentom brenda.
 class GradientButton extends StatelessWidget {
   const GradientButton({super.key, required this.label, required this.onPressed, this.icon});
 
@@ -39,7 +38,13 @@ class GradientButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (icon != null) ...[Icon(icon, size: 20, color: Colors.white), const SizedBox(width: 8)],
-                  Text(label, style: theme.textTheme.labelLarge?.copyWith(color: Colors.white)),
+                  Flexible(
+                    child: Text(
+                      label,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelLarge?.copyWith(color: Colors.white),
+                    ),
+                  ),
                 ],
               ),
             ),

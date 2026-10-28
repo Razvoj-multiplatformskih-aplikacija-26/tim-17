@@ -6,13 +6,15 @@ import 'package:ui/ui.dart';
 
 import 'dependencies.dart';
 import 'router.dart';
+import 'theme_mode.dart';
 
 class BackofficeApp extends StatefulWidget {
-  const BackofficeApp({super.key, required this.dependencies});
+  const BackofficeApp({super.key, required this.dependencies, this.themeMode = ThemeMode.system});
 
   static const locale = Locale.fromSubtags(languageCode: 'sr', scriptCode: 'Latn');
 
   final BackofficeDependencies dependencies;
+  final ThemeMode themeMode;
 
   @override
   State<BackofficeApp> createState() => _BackofficeAppState();
@@ -31,19 +33,25 @@ class _BackofficeAppState extends State<BackofficeApp> {
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
       value: widget.dependencies,
-      child: MaterialApp.router(
-        title: 'Jobly Backoffice',
-        theme: JoblyTheme.light(),
-        darkTheme: JoblyTheme.dark(),
-        themeMode: ThemeMode.system,
-        locale: BackofficeApp.locale,
-        supportedLocales: const [BackofficeApp.locale],
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        routerConfig: _router,
+      child: BlocProvider(
+        create: (_) => ThemeModeCubit(widget.themeMode),
+        child: BlocBuilder<ThemeModeCubit, ThemeMode>(
+          builder: (context, themeMode) => MaterialApp.router(
+            title: 'Jobly Backoffice',
+            debugShowCheckedModeBanner: false,
+            theme: JoblyTheme.light(),
+            darkTheme: JoblyTheme.dark(),
+            themeMode: themeMode,
+            locale: BackofficeApp.locale,
+            supportedLocales: const [BackofficeApp.locale],
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            routerConfig: _router,
+          ),
+        ),
       ),
     );
   }

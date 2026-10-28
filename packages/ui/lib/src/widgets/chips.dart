@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../jobly_colors.dart';
 
-/// Pilula u Instagram stilu: siva kad nije izabrana, obrnuta (crna ili bela) kad jeste.
 class JoblyChip extends StatelessWidget {
   const JoblyChip({
     super.key,
@@ -74,7 +73,6 @@ class JoblyChip extends StatelessWidget {
   }
 }
 
-/// Oznaka aktivnog filtera koja se uklanja dodirom.
 class RemovableTag extends StatelessWidget {
   const RemovableTag({super.key, required this.label, required this.onRemove});
 

@@ -4,7 +4,6 @@ import 'package:ui/ui.dart';
 
 import '../theme_mode.dart';
 
-/// Zakačena zamućena traka sa logotipom i prekidačem teme.
 class JoblyTopBar extends StatelessWidget {
   const JoblyTopBar({super.key});
 
@@ -29,7 +28,6 @@ class JoblyTopBar extends StatelessWidget {
   }
 }
 
-/// Veliki naslov ekrana sa podnaslovom, kao na iOS-u.
 class LargeTitle extends StatelessWidget {
   const LargeTitle({super.key, required this.title, required this.subtitle});
 
@@ -53,7 +51,6 @@ class LargeTitle extends StatelessWidget {
   }
 }
 
-/// Traka koja ostaje zakačena ispod gornje trake dok se skroluje.
 class PinnedFrostedBar extends SliverPersistentHeaderDelegate {
   const PinnedFrostedBar({required this.child, this.height = 60});
 

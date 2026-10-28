@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Izbor filtera na ekranu poslova. Kad stignu oglasi, smena, način isplate i
-// kategorija prelaze u domenski paket, a stanje filtera u Bloc.
-
 const serbianCities = [
   'Beograd',
   'Novi Sad',
