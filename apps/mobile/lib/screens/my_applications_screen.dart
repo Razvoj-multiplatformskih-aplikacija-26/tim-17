@@ -4,14 +4,7 @@ import 'package:ui/ui.dart';
 
 import '../widgets/top_bar.dart';
 
-const _statusTabs = [
-  'Sve',
-  'Na čekanju',
-  'Prihvaćene',
-  'Odbijene',
-  'Završene',
-  'Povučene',
-];
+const _statusTabs = ['Sve', 'Na čekanju', 'Prihvaćene', 'Odbijene', 'Završene', 'Povučene'];
 
 class MyApplicationsScreen extends StatefulWidget {
   const MyApplicationsScreen({super.key});
@@ -31,10 +24,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
         slivers: [
           const JoblyTopBar(),
           const SliverToBoxAdapter(
-            child: LargeTitle(
-              title: 'Moje prijave',
-              subtitle: 'Prati gde si se prijavio',
-            ),
+            child: LargeTitle(title: 'Moje prijave', subtitle: 'Prati gde si se prijavio'),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 8)),
           SliverPersistentHeader(
@@ -42,10 +32,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
             delegate: PinnedFrostedBar(
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 itemCount: _statusTabs.length,
                 separatorBuilder: (context, index) => const SizedBox(width: 8),
                 itemBuilder: (context, index) {
@@ -62,14 +49,10 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
           SliverFillRemaining(
             hasScrollBody: false,
             child: Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.paddingOf(context).bottom,
-              ),
+              padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
               child: EmptyView(
                 icon: Icons.assignment_outlined,
-                title: showsAll
-                    ? 'Još nemaš prijava'
-                    : 'Nema prijava u ovoj grupi',
+                title: showsAll ? 'Još nemaš prijava' : 'Nema prijava u ovoj grupi',
                 message: showsAll
                     ? 'Pronađi oglas koji ti odgovara i prijavi se u par koraka.'
                     : 'Ovde će se pojaviti prijave sa statusom „${_status.toLowerCase()}“.',

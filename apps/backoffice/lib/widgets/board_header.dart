@@ -40,26 +40,18 @@ class BoardHeader extends StatelessWidget {
           header: true,
           child: Text(
             'Prijave kandidata',
-            style: compact
-                ? theme.textTheme.headlineMedium
-                : theme.textTheme.displaySmall,
+            style: compact ? theme.textTheme.headlineMedium : theme.textTheme.displaySmall,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '$total ${pluralize(total, one: 'prijava', few: 'prijave', many: 'prijava')} · '
           '$postings ${pluralize(postings, one: 'oglas', few: 'oglasa', many: 'oglasa')}',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
+          style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
         ),
       ],
     );
-    final searchField = _SearchField(
-      controller: search,
-      focusNode: searchFocus,
-      onChanged: onQuery,
-    );
+    final searchField = _SearchField(controller: search, focusNode: searchFocus, onChanged: onQuery);
     final shortcutsButton = IconButton(
       tooltip: 'Prečice na tastaturi (?)',
       icon: const Icon(Icons.keyboard_alt_outlined),
@@ -71,13 +63,7 @@ class BoardHeader extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Row(
-              children: [
-                JoblyWordmark(size: 24),
-                Spacer(),
-                ThemeToggleButton(),
-              ],
-            ),
+            const Row(children: [JoblyWordmark(size: 24), Spacer(), ThemeToggleButton()]),
             const SizedBox(height: 12),
             title,
             const SizedBox(height: 16),
@@ -87,11 +73,7 @@ class BoardHeader extends StatelessWidget {
                 children: [
                   Expanded(child: searchField),
                   const SizedBox(width: 8),
-                  ViewSwitcher(
-                    value: view,
-                    onChanged: onView,
-                    showLabels: false,
-                  ),
+                  ViewSwitcher(value: view, onChanged: onView, showLabels: false),
                 ],
               ),
             ),
@@ -118,11 +100,7 @@ class BoardHeader extends StatelessWidget {
 }
 
 class _SearchField extends StatelessWidget {
-  const _SearchField({
-    required this.controller,
-    required this.focusNode,
-    required this.onChanged,
-  });
+  const _SearchField({required this.controller, required this.focusNode, required this.onChanged});
 
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -150,22 +128,14 @@ class _SearchField extends StatelessWidget {
                   onChanged('');
                 },
               ),
-        suffixIconConstraints: const BoxConstraints(
-          minWidth: 44,
-          minHeight: 40,
-        ),
+        suffixIconConstraints: const BoxConstraints(minWidth: 44, minHeight: 40),
       ),
     );
   }
 }
 
 class ViewSwitcher extends StatelessWidget {
-  const ViewSwitcher({
-    super.key,
-    required this.value,
-    required this.onChanged,
-    this.showLabels = true,
-  });
+  const ViewSwitcher({super.key, required this.value, required this.onChanged, this.showLabels = true});
 
   final BoardView value;
   final ValueChanged<BoardView> onChanged;
@@ -177,10 +147,7 @@ class ViewSwitcher extends StatelessWidget {
     final dark = theme.brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
-        color: theme.jobly.fill,
-        borderRadius: BorderRadius.circular(10),
-      ),
+      decoration: BoxDecoration(color: theme.jobly.fill, borderRadius: BorderRadius.circular(10)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -195,21 +162,14 @@ class ViewSwitcher extends StatelessWidget {
                   onTap: () => onChanged(view),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 180),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: showLabels ? 14 : 10,
-                      vertical: 7,
-                    ),
+                    padding: EdgeInsets.symmetric(horizontal: showLabels ? 14 : 10, vertical: 7),
                     decoration: view == value
                         ? BoxDecoration(
-                            color: dark
-                                ? theme.colorScheme.surfaceContainerHighest
-                                : theme.colorScheme.surface,
+                            color: dark ? theme.colorScheme.surfaceContainerHighest : theme.colorScheme.surface,
                             borderRadius: BorderRadius.circular(8),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(
-                                  alpha: dark ? 0.3 : 0.08,
-                                ),
+                                color: Colors.black.withValues(alpha: dark ? 0.3 : 0.08),
                                 blurRadius: 4,
                                 offset: const Offset(0, 1),
                               ),
@@ -259,23 +219,14 @@ class BoardToolbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final total = counts.values.fold(0, (sum, count) => sum + count);
-    final selectedPosting = postings
-        .where((posting) => posting.id == postingFilter)
-        .firstOrNull;
+    final selectedPosting = postings.where((posting) => posting.id == postingFilter).firstOrNull;
     return SizedBox(
       height: 56,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(
-          horizontal: compact ? 16 : 32,
-          vertical: 10,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: compact ? 16 : 32, vertical: 10),
         children: [
-          JoblyChip(
-            label: 'Sve $total',
-            selected: statusFilter == null,
-            onTap: () => onStatus(null),
-          ),
+          JoblyChip(label: 'Sve $total', selected: statusFilter == null, onTap: () => onStatus(null)),
           for (final status in ApplicationStatus.values) ...[
             const SizedBox(width: 8),
             JoblyChip(
@@ -305,8 +256,7 @@ class BoardToolbar extends StatelessWidget {
               icon: Icons.work_outline_rounded,
               selected: selectedPosting != null,
               showChevron: true,
-              onTap: () =>
-                  controller.isOpen ? controller.close() : controller.open(),
+              onTap: () => controller.isOpen ? controller.close() : controller.open(),
             ),
           ),
         ],
@@ -323,11 +273,6 @@ class _Check extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SizedBox(
     width: 24,
-    child: visible
-        ? Icon(
-            Icons.check_rounded,
-            color: Theme.of(context).colorScheme.primary,
-          )
-        : null,
+    child: visible ? Icon(Icons.check_rounded, color: Theme.of(context).colorScheme.primary) : null,
   );
 }

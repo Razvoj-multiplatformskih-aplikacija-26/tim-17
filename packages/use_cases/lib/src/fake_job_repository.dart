@@ -3,11 +3,9 @@ import 'package:domain/domain.dart';
 import 'ports/job_repository.dart';
 
 final class FakeJobRepository implements JobRepository {
-  FakeJobRepository({
-    List<JobPosting>? initialJobs,
-    List<JobApplication>? initialApplications,
-  }) : _jobs = List.of(initialJobs ?? _defaultJobs),
-       _applications = List.of(initialApplications ?? []);
+  FakeJobRepository({List<JobPosting>? initialJobs, List<JobApplication>? initialApplications})
+    : _jobs = List.of(initialJobs ?? _defaultJobs),
+      _applications = List.of(initialApplications ?? []);
 
   final List<JobPosting> _jobs;
   final List<JobApplication> _applications;
@@ -49,21 +47,14 @@ final class FakeJobRepository implements JobRepository {
   }
 
   @override
-  Future<Result<List<JobApplication>>> getApplicationsForStudent(
-    UserId studentId,
-  ) async {
+  Future<Result<List<JobApplication>>> getApplicationsForStudent(UserId studentId) async {
     await Future<void>.delayed(const Duration(milliseconds: 300));
-    final studentApps = _applications
-        .where((app) => app.studentId == studentId)
-        .toList();
+    final studentApps = _applications.where((app) => app.studentId == studentId).toList();
     return Success(List.unmodifiable(studentApps));
   }
 
   @override
-  Future<Result<JobApplication>> applyForJob({
-    required JobPostingId jobId,
-    required UserId studentId,
-  }) async {
+  Future<Result<JobApplication>> applyForJob({required JobPostingId jobId, required UserId studentId}) async {
     await Future<void>.delayed(const Duration(milliseconds: 300));
 
     final jobIndex = _jobs.indexWhere((j) => j.id == jobId);

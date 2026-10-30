@@ -7,16 +7,12 @@ Future<void> _openApp(WidgetTester tester) async {
   tester.view.physicalSize = const Size(1080, 2400);
   tester.view.devicePixelRatio = 2.75;
   addTearDown(tester.view.reset);
-  await tester.pumpWidget(
-    JoblyApp(dependencies: AppDependencies.fake(), themeMode: ThemeMode.light),
-  );
+  await tester.pumpWidget(JoblyApp(dependencies: AppDependencies.fake(), themeMode: ThemeMode.light));
   await tester.pumpAndSettle();
 }
 
 void main() {
-  testWidgets('aplikacija se otvara na poslovima i prelazi na moje prijave', (
-    tester,
-  ) async {
+  testWidgets('aplikacija se otvara na poslovima i prelazi na moje prijave', (tester) async {
     await _openApp(tester);
     expect(find.text('Oglasi stižu uskoro'), findsOneWidget);
     expect(find.text('0 '), findsNothing);
@@ -26,9 +22,7 @@ void main() {
     expect(find.text('Još nemaš prijava'), findsOneWidget);
   });
 
-  testWidgets('izbor grada se vidi kao oznaka i može da se ukloni', (
-    tester,
-  ) async {
+  testWidgets('izbor grada se vidi kao oznaka i može da se ukloni', (tester) async {
     await _openApp(tester);
 
     await tester.tap(find.text('Grad'));
@@ -68,16 +62,10 @@ void main() {
 
   testWidgets('prekidač menja svetlu temu u tamnu', (tester) async {
     await _openApp(tester);
-    expect(
-      Theme.of(tester.element(find.text('Poslovi').last)).brightness,
-      Brightness.light,
-    );
+    expect(Theme.of(tester.element(find.text('Poslovi').last)).brightness, Brightness.light);
 
     await tester.tap(find.byTooltip('Tamna tema'));
     await tester.pumpAndSettle();
-    expect(
-      Theme.of(tester.element(find.text('Poslovi').last)).brightness,
-      Brightness.dark,
-    );
+    expect(Theme.of(tester.element(find.text('Poslovi').last)).brightness, Brightness.dark);
   });
 }

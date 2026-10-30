@@ -3,12 +3,7 @@ import 'package:flutter/material.dart';
 import '../jobly_colors.dart';
 
 class GradientButton extends StatelessWidget {
-  const GradientButton({
-    super.key,
-    required this.label,
-    required this.onPressed,
-    this.icon,
-  });
+  const GradientButton({super.key, required this.label, required this.onPressed, this.icon});
 
   final String label;
   final VoidCallback onPressed;
@@ -42,17 +37,12 @@ class GradientButton extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (icon != null) ...[
-                    Icon(icon, size: 20, color: Colors.white),
-                    const SizedBox(width: 8),
-                  ],
+                  if (icon != null) ...[Icon(icon, size: 20, color: Colors.white), const SizedBox(width: 8)],
                   Flexible(
                     child: Text(
                       label,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: Colors.white,
-                      ),
+                      style: theme.textTheme.labelLarge?.copyWith(color: Colors.white),
                     ),
                   ),
                 ],

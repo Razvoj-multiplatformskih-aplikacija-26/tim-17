@@ -42,25 +42,12 @@ class JoblyChip extends StatelessWidget {
               duration: const Duration(milliseconds: 180),
               curve: Curves.easeOut,
               height: 36,
-              padding: EdgeInsets.fromLTRB(
-                icon == null ? 14 : 12,
-                0,
-                showChevron ? 8 : 14,
-                0,
-              ),
+              padding: EdgeInsets.fromLTRB(icon == null ? 14 : 12, 0, showChevron ? 8 : 14, 0),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (icon != null) ...[
-                    Icon(icon, size: 17, color: foreground),
-                    const SizedBox(width: 6),
-                  ],
-                  Text(
-                    label,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: foreground,
-                    ),
-                  ),
+                  if (icon != null) ...[Icon(icon, size: 17, color: foreground), const SizedBox(width: 6)],
+                  Text(label, style: theme.textTheme.labelMedium?.copyWith(color: foreground)),
                   if (count > 0) ...[
                     const SizedBox(width: 6),
                     Container(
@@ -68,25 +55,13 @@ class JoblyChip extends StatelessWidget {
                       height: 20,
                       padding: const EdgeInsets.symmetric(horizontal: 6),
                       alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        gradient: jobly.gradient,
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Text(
-                        '$count',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
+                      decoration: BoxDecoration(gradient: jobly.gradient, borderRadius: BorderRadius.circular(999)),
+                      child: Text('$count', style: theme.textTheme.labelSmall?.copyWith(color: Colors.white)),
                     ),
                   ],
                   if (showChevron) ...[
                     const SizedBox(width: 2),
-                    Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      size: 20,
-                      color: foreground,
-                    ),
+                    Icon(Icons.keyboard_arrow_down_rounded, size: 20, color: foreground),
                   ],
                 ],
               ),
@@ -123,10 +98,7 @@ class RemovableTag extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    label,
-                    style: theme.textTheme.labelMedium?.copyWith(color: color),
-                  ),
+                  Text(label, style: theme.textTheme.labelMedium?.copyWith(color: color)),
                   const SizedBox(width: 4),
                   Icon(Icons.close_rounded, size: 16, color: color),
                 ],

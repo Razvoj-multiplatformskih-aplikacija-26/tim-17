@@ -152,12 +152,7 @@ final class JoblyTokens {
 }
 
 final class StatusTokens {
-  const StatusTokens({
-    required this.pending,
-    required this.accepted,
-    required this.rejected,
-    required this.completed,
-  });
+  const StatusTokens({required this.pending, required this.accepted, required this.rejected, required this.completed});
 
   static const light = StatusTokens(
     pending: 0xFFD97706,

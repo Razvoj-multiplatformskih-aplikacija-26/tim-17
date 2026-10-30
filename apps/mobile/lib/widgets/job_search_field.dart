@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
 class JobSearchField extends StatelessWidget {
-  const JobSearchField({
-    super.key,
-    required this.controller,
-    required this.onChanged,
-  });
+  const JobSearchField({super.key, required this.controller, required this.onChanged});
 
   final TextEditingController controller;
   final ValueChanged<String> onChanged;

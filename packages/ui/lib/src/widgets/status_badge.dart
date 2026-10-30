@@ -25,9 +25,7 @@ extension ApplicationStatusLabel on ApplicationStatus {
   };
 
   Color colorIn(Brightness brightness) {
-    final tokens = brightness == Brightness.dark
-        ? StatusTokens.dark
-        : StatusTokens.light;
+    final tokens = brightness == Brightness.dark ? StatusTokens.dark : StatusTokens.light;
     return Color(switch (this) {
       ApplicationStatus.pending => tokens.pending,
       ApplicationStatus.accepted => tokens.accepted,
@@ -48,10 +46,7 @@ class StatusDot extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: status.colorIn(Theme.of(context).brightness),
-      ),
+      decoration: BoxDecoration(shape: BoxShape.circle, color: status.colorIn(Theme.of(context).brightness)),
     );
   }
 }
@@ -68,19 +63,13 @@ class StatusBadge extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(999),
-      ),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(999)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           StatusDot(status: status, size: 7),
           const SizedBox(width: 6),
-          Text(
-            status.label,
-            style: theme.textTheme.labelMedium?.copyWith(color: color),
-          ),
+          Text(status.label, style: theme.textTheme.labelMedium?.copyWith(color: color)),
         ],
       ),
     );

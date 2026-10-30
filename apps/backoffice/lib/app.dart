@@ -9,16 +9,9 @@ import 'router.dart';
 import 'theme_mode.dart';
 
 class BackofficeApp extends StatefulWidget {
-  const BackofficeApp({
-    super.key,
-    required this.dependencies,
-    this.themeMode = ThemeMode.system,
-  });
+  const BackofficeApp({super.key, required this.dependencies, this.themeMode = ThemeMode.system});
 
-  static const locale = Locale.fromSubtags(
-    languageCode: 'sr',
-    scriptCode: 'Latn',
-  );
+  static const locale = Locale.fromSubtags(languageCode: 'sr', scriptCode: 'Latn');
 
   final BackofficeDependencies dependencies;
   final ThemeMode themeMode;

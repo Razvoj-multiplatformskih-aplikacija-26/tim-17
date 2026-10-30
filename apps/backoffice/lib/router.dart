@@ -7,10 +7,7 @@ GoRouter createRouter() {
     initialLocation: '/applications',
     routes: [
       GoRoute(path: '/', redirect: (context, state) => '/applications'),
-      GoRoute(
-        path: '/applications',
-        builder: (context, state) => const ApplicationsScreen(),
-      ),
+      GoRoute(path: '/applications', builder: (context, state) => const ApplicationsScreen()),
     ],
   );
 }

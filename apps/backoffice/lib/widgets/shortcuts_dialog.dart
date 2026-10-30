@@ -23,30 +23,16 @@ class ShortcutsDialog extends StatelessWidget {
                   children: [
                     SizedBox(
                       width: 120,
-                      child: Wrap(
-                        spacing: 4,
-                        children: [for (final key in shortcut.keys) Kbd(key)],
-                      ),
+                      child: Wrap(spacing: 4, children: [for (final key in shortcut.keys) Kbd(key)]),
                     ),
-                    Expanded(
-                      child: Text(
-                        shortcut.description,
-                        style: theme.textTheme.bodyMedium,
-                      ),
-                    ),
+                    Expanded(child: Text(shortcut.description, style: theme.textTheme.bodyMedium)),
                   ],
                 ),
               ),
           ],
         ),
       ),
-      actions: [
-        FilledButton(
-          autofocus: true,
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Zatvori'),
-        ),
-      ],
+      actions: [FilledButton(autofocus: true, onPressed: () => Navigator.pop(context), child: const Text('Zatvori'))],
     );
   }
 }

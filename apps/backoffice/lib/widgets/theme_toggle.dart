@@ -13,12 +13,9 @@ class ThemeToggleButton extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final label = isDark ? 'Svetla tema' : 'Tamna tema';
-    final icon = Icon(
-      isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
-    );
+    final icon = Icon(isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined);
     void toggle() => context.read<ThemeModeCubit>().toggle(theme.brightness);
-    if (!showLabel)
-      return IconButton(tooltip: label, icon: icon, onPressed: toggle);
+    if (!showLabel) return IconButton(tooltip: label, icon: icon, onPressed: toggle);
     return TextButton.icon(
       onPressed: toggle,
       style: TextButton.styleFrom(

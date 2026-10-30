@@ -13,8 +13,7 @@ class GradientMask extends StatelessWidget {
     final middle = gradient.colors[gradient.colors.length ~/ 2];
     return ShaderMask(
       blendMode: BlendMode.srcIn,
-      shaderCallback: (bounds) =>
-          gradient.createShader(Offset.zero & bounds.size),
+      shaderCallback: (bounds) => gradient.createShader(Offset.zero & bounds.size),
       child: DefaultTextStyle.merge(
         style: TextStyle(color: middle),
         child: IconTheme.merge(
@@ -39,12 +38,7 @@ class JoblyWordmark extends StatelessWidget {
         child: GradientMask(
           child: Text(
             'jobly',
-            style: TextStyle(
-              fontSize: size,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -1.2,
-              height: 1,
-            ),
+            style: TextStyle(fontSize: size, fontWeight: FontWeight.w800, letterSpacing: -1.2, height: 1),
           ),
         ),
       ),

@@ -21,19 +21,11 @@ class BulkActionBar extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final foreground = scheme.onInverseSurface;
-    Widget action(
-      IconData icon,
-      String label,
-      String key,
-      VoidCallback onPressed,
-    ) => Tooltip(
+    Widget action(IconData icon, String label, String key, VoidCallback onPressed) => Tooltip(
       message: '$label ($key)',
       child: TextButton.icon(
         onPressed: onPressed,
-        style: TextButton.styleFrom(
-          foregroundColor: foreground,
-          textStyle: theme.textTheme.labelLarge,
-        ),
+        style: TextButton.styleFrom(foregroundColor: foreground, textStyle: theme.textTheme.labelLarge),
         icon: Icon(icon, size: 20),
         label: Text(label),
       ),
@@ -49,26 +41,16 @@ class BulkActionBar extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(width: 12),
-            Text(
-              '$count izabrano',
-              style: theme.textTheme.labelLarge?.copyWith(color: foreground),
-            ),
+            Text('$count izabrano', style: theme.textTheme.labelLarge?.copyWith(color: foreground)),
             const SizedBox(width: 12),
-            Container(
-              width: 1,
-              height: 24,
-              color: foreground.withValues(alpha: 0.2),
-            ),
+            Container(width: 1, height: 24, color: foreground.withValues(alpha: 0.2)),
             const SizedBox(width: 4),
             action(Icons.check_rounded, 'Prihvati', 'P', onAccept),
             action(Icons.close_rounded, 'Odbij', 'O', onReject),
             action(Icons.task_alt_rounded, 'Završi', 'Z', onComplete),
             IconButton(
               tooltip: 'Poništi izbor (Esc)',
-              icon: Icon(
-                Icons.close_rounded,
-                color: foreground.withValues(alpha: 0.7),
-              ),
+              icon: Icon(Icons.close_rounded, color: foreground.withValues(alpha: 0.7)),
               onPressed: onClear,
             ),
           ],
