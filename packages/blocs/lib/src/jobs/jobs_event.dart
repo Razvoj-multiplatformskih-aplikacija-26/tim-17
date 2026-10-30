@@ -1,6 +1,5 @@
 part of 'jobs_bloc.dart';
 
-
 sealed class JobsEvent extends Equatable {
   const JobsEvent();
 

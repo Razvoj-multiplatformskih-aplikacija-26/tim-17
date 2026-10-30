@@ -19,7 +19,9 @@ class JoblyTopBar extends StatelessWidget {
       actions: [
         IconButton(
           tooltip: isDark ? 'Svetla tema' : 'Tamna tema',
-          icon: Icon(isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined),
+          icon: Icon(
+            isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+          ),
           onPressed: () => context.read<ThemeModeCubit>().toggle(brightness),
         ),
         const SizedBox(width: 8),
@@ -42,9 +44,17 @@ class LargeTitle extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Semantics(header: true, child: Text(title, style: theme.textTheme.displaySmall)),
+          Semantics(
+            header: true,
+            child: Text(title, style: theme.textTheme.displaySmall),
+          ),
           const SizedBox(height: 4),
-          Text(subtitle, style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+          Text(
+            subtitle,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
@@ -64,10 +74,15 @@ class PinnedFrostedBar extends SliverPersistentHeaderDelegate {
   double get maxExtent => height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Frosted(bottom: true, child: SizedBox.expand(child: child));
   }
 
   @override
-  bool shouldRebuild(PinnedFrostedBar oldDelegate) => oldDelegate.child != child || oldDelegate.height != height;
+  bool shouldRebuild(PinnedFrostedBar oldDelegate) =>
+      oldDelegate.child != child || oldDelegate.height != height;
 }

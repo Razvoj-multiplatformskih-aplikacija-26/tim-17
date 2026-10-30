@@ -15,10 +15,20 @@ GoRouter createRouter() {
         builder: (context, state, shell) => HomeShell(shell: shell),
         branches: [
           StatefulShellBranch(
-            routes: [GoRoute(path: '/', builder: (context, state) => const JobsScreen())],
+            routes: [
+              GoRoute(
+                path: '/',
+                builder: (context, state) => const JobsScreen(),
+              ),
+            ],
           ),
           StatefulShellBranch(
-            routes: [GoRoute(path: '/applications', builder: (context, state) => const MyApplicationsScreen())],
+            routes: [
+              GoRoute(
+                path: '/applications',
+                builder: (context, state) => const MyApplicationsScreen(),
+              ),
+            ],
           ),
         ],
       ),

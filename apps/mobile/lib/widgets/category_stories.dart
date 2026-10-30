@@ -4,7 +4,11 @@ import 'package:ui/ui.dart';
 import '../models/job_filters.dart';
 
 class CategoryStories extends StatelessWidget {
-  const CategoryStories({super.key, required this.selected, required this.onToggle});
+  const CategoryStories({
+    super.key,
+    required this.selected,
+    required this.onToggle,
+  });
 
   final Set<JobCategory> selected;
   final ValueChanged<JobCategory> onToggle;
@@ -20,7 +24,11 @@ class CategoryStories extends StatelessWidget {
         separatorBuilder: (context, index) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final category = JobCategory.values[index];
-          return _Story(category: category, selected: selected.contains(category), onTap: () => onToggle(category));
+          return _Story(
+            category: category,
+            selected: selected.contains(category),
+            onTap: () => onToggle(category),
+          );
         },
       ),
     );
@@ -28,7 +36,11 @@ class CategoryStories extends StatelessWidget {
 }
 
 class _Story extends StatelessWidget {
-  const _Story({required this.category, required this.selected, required this.onTap});
+  const _Story({
+    required this.category,
+    required this.selected,
+    required this.onTap,
+  });
 
   final JobCategory category;
   final bool selected;
@@ -62,12 +74,22 @@ class _Story extends StatelessWidget {
                   ),
                   child: Container(
                     padding: const EdgeInsets.all(3),
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: theme.colorScheme.surface),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: theme.colorScheme.surface,
+                    ),
                     child: Container(
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: jobly.fill),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: jobly.fill,
+                      ),
                       child: selected
                           ? GradientMask(child: Icon(category.icon, size: 26))
-                          : Icon(category.icon, size: 26, color: theme.colorScheme.onSurface),
+                          : Icon(
+                              category.icon,
+                              size: 26,
+                              color: theme.colorScheme.onSurface,
+                            ),
                     ),
                   ),
                 ),

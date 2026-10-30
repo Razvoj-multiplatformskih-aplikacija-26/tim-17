@@ -8,14 +8,17 @@ part 'jobs_state.dart';
 
 class JobsBloc extends Bloc<JobsEvent, JobsState> {
   JobsBloc({required JobRepository jobRepository})
-      : _jobRepository = jobRepository,
-        super(const JobsInitial()) {
+    : _jobRepository = jobRepository,
+      super(const JobsInitial()) {
     on<JobsRequested>(_onJobsRequested);
   }
 
   final JobRepository _jobRepository;
 
-  Future<void> _onJobsRequested(JobsRequested event, Emitter<JobsState> emit) async {
+  Future<void> _onJobsRequested(
+    JobsRequested event,
+    Emitter<JobsState> emit,
+  ) async {
     emit(const JobsLoadInProgress());
 
     final result = await _jobRepository.getJobPostings();

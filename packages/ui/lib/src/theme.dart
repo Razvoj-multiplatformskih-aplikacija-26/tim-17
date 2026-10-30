@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'jobly_colors.dart';
 
 abstract final class JoblyTheme {
-  static ThemeData light() => _build(_scheme(ColorTokens.light, Brightness.light), JoblyColors.light);
+  static ThemeData light() =>
+      _build(_scheme(ColorTokens.light, Brightness.light), JoblyColors.light);
 
-  static ThemeData dark() => _build(_scheme(ColorTokens.dark, Brightness.dark), JoblyColors.dark);
+  static ThemeData dark() =>
+      _build(_scheme(ColorTokens.dark, Brightness.dark), JoblyColors.dark);
 
   static ThemeData _build(ColorScheme scheme, JoblyColors jobly) {
     final textTheme = _textTheme(ThemeData(colorScheme: scheme).textTheme);
@@ -30,7 +32,9 @@ abstract final class JoblyTheme {
         elevation: 0,
         margin: EdgeInsets.zero,
         clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Radii.xl)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Radii.xl),
+        ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
@@ -58,13 +62,22 @@ abstract final class JoblyTheme {
         ),
       ),
       iconButtonTheme: IconButtonThemeData(
-        style: IconButton.styleFrom(minimumSize: const Size(44, 44), foregroundColor: scheme.onSurface),
+        style: IconButton.styleFrom(
+          minimumSize: const Size(44, 44),
+          foregroundColor: scheme.onSurface,
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: jobly.fill,
-        contentPadding: const EdgeInsets.symmetric(horizontal: Spacing.lg, vertical: 14),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(Radii.md), borderSide: BorderSide.none),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: Spacing.lg,
+          vertical: 14,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Radii.md),
+          borderSide: BorderSide.none,
+        ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(Radii.md),
           borderSide: BorderSide(color: scheme.primary, width: 1.5),
@@ -73,7 +86,9 @@ abstract final class JoblyTheme {
           borderRadius: BorderRadius.circular(Radii.md),
           borderSide: BorderSide(color: scheme.error),
         ),
-        hintStyle: textTheme.bodyLarge?.copyWith(color: scheme.onSurfaceVariant),
+        hintStyle: textTheme.bodyLarge?.copyWith(
+          color: scheme.onSurfaceVariant,
+        ),
         errorStyle: textTheme.bodySmall?.copyWith(color: scheme.error),
       ),
       navigationBarTheme: NavigationBarThemeData(
@@ -86,35 +101,49 @@ abstract final class JoblyTheme {
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
             size: 30,
-            color: states.contains(WidgetState.selected) ? scheme.onSurface : scheme.onSurfaceVariant,
+            color: states.contains(WidgetState.selected)
+                ? scheme.onSurface
+                : scheme.onSurfaceVariant,
           ),
         ),
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => textTheme.labelSmall?.copyWith(
             fontSize: 12,
-            color: states.contains(WidgetState.selected) ? scheme.onSurface : scheme.onSurfaceVariant,
+            color: states.contains(WidgetState.selected)
+                ? scheme.onSurface
+                : scheme.onSurfaceVariant,
           ),
         ),
       ),
       bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: scheme.brightness == Brightness.dark ? scheme.surfaceContainer : scheme.surface,
+        backgroundColor: scheme.brightness == Brightness.dark
+            ? scheme.surfaceContainer
+            : scheme.surface,
         surfaceTintColor: Colors.transparent,
         dragHandleColor: scheme.outline,
         dragHandleSize: const Size(36, 5),
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(Radii.xl))),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(Radii.xl)),
+        ),
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: scheme.surfaceContainer,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Radii.xl)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Radii.xl),
+        ),
         titleTextStyle: textTheme.titleLarge,
         contentTextStyle: textTheme.bodyMedium,
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         backgroundColor: scheme.inverseSurface,
-        contentTextStyle: textTheme.bodyMedium?.copyWith(color: scheme.onInverseSurface),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Radii.lg)),
+        contentTextStyle: textTheme.bodyMedium?.copyWith(
+          color: scheme.onInverseSurface,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Radii.lg),
+        ),
       ),
       sliderTheme: SliderThemeData(
         activeTrackColor: scheme.primary,
@@ -130,56 +159,103 @@ abstract final class JoblyTheme {
       ),
       tooltipTheme: TooltipThemeData(
         waitDuration: const Duration(milliseconds: 400),
-        decoration: BoxDecoration(color: scheme.inverseSurface, borderRadius: BorderRadius.circular(8)),
-        textStyle: textTheme.bodySmall?.copyWith(color: scheme.onInverseSurface),
+        decoration: BoxDecoration(
+          color: scheme.inverseSurface,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        textStyle: textTheme.bodySmall?.copyWith(
+          color: scheme.onInverseSurface,
+        ),
       ),
-      dividerTheme: DividerThemeData(color: jobly.separator, thickness: 0.5, space: 0.5),
+      dividerTheme: DividerThemeData(
+        color: jobly.separator,
+        thickness: 0.5,
+        space: 0.5,
+      ),
       focusColor: scheme.primary.withValues(alpha: 0.16),
       extensions: [jobly],
     );
   }
 
   static TextTheme _textTheme(TextTheme t) => t.copyWith(
-    displaySmall: t.displaySmall?.copyWith(fontSize: 34, fontWeight: FontWeight.w700, letterSpacing: -0.8, height: 1.1),
-    headlineMedium: t.headlineMedium?.copyWith(fontSize: 28, fontWeight: FontWeight.w700, letterSpacing: -0.6),
-    headlineSmall: t.headlineSmall?.copyWith(fontSize: 22, fontWeight: FontWeight.w700, letterSpacing: -0.4),
-    titleLarge: t.titleLarge?.copyWith(fontSize: 20, fontWeight: FontWeight.w600, letterSpacing: -0.3),
-    titleMedium: t.titleMedium?.copyWith(fontSize: 17, fontWeight: FontWeight.w600, letterSpacing: -0.3),
-    titleSmall: t.titleSmall?.copyWith(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: -0.2),
+    displaySmall: t.displaySmall?.copyWith(
+      fontSize: 34,
+      fontWeight: FontWeight.w700,
+      letterSpacing: -0.8,
+      height: 1.1,
+    ),
+    headlineMedium: t.headlineMedium?.copyWith(
+      fontSize: 28,
+      fontWeight: FontWeight.w700,
+      letterSpacing: -0.6,
+    ),
+    headlineSmall: t.headlineSmall?.copyWith(
+      fontSize: 22,
+      fontWeight: FontWeight.w700,
+      letterSpacing: -0.4,
+    ),
+    titleLarge: t.titleLarge?.copyWith(
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+      letterSpacing: -0.3,
+    ),
+    titleMedium: t.titleMedium?.copyWith(
+      fontSize: 17,
+      fontWeight: FontWeight.w600,
+      letterSpacing: -0.3,
+    ),
+    titleSmall: t.titleSmall?.copyWith(
+      fontSize: 15,
+      fontWeight: FontWeight.w600,
+      letterSpacing: -0.2,
+    ),
     bodyLarge: t.bodyLarge?.copyWith(fontSize: 17, letterSpacing: -0.3),
     bodyMedium: t.bodyMedium?.copyWith(fontSize: 15, letterSpacing: -0.2),
     bodySmall: t.bodySmall?.copyWith(fontSize: 13, letterSpacing: -0.1),
-    labelLarge: t.labelLarge?.copyWith(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: -0.2),
-    labelMedium: t.labelMedium?.copyWith(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: -0.1),
-    labelSmall: t.labelSmall?.copyWith(fontSize: 11, fontWeight: FontWeight.w600, letterSpacing: 0),
+    labelLarge: t.labelLarge?.copyWith(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      letterSpacing: -0.2,
+    ),
+    labelMedium: t.labelMedium?.copyWith(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      letterSpacing: -0.1,
+    ),
+    labelSmall: t.labelSmall?.copyWith(
+      fontSize: 11,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0,
+    ),
   );
 
-  static ColorScheme _scheme(ColorTokens t, Brightness brightness) => ColorScheme(
-    brightness: brightness,
-    primary: Color(t.primary),
-    onPrimary: Color(t.onPrimary),
-    primaryContainer: Color(t.primaryContainer),
-    onPrimaryContainer: Color(t.onPrimaryContainer),
-    secondary: Color(t.secondary),
-    onSecondary: Color(t.onSecondary),
-    tertiary: Color(t.tertiary),
-    onTertiary: Color(t.onTertiary),
-    error: Color(t.error),
-    onError: Color(t.onError),
-    errorContainer: Color(t.errorContainer),
-    onErrorContainer: Color(t.onErrorContainer),
-    surface: Color(t.surface),
-    onSurface: Color(t.onSurface),
-    surfaceContainerLowest: Color(t.surfaceContainerLowest),
-    surfaceContainerLow: Color(t.surfaceContainerLow),
-    surfaceContainer: Color(t.surfaceContainer),
-    surfaceContainerHigh: Color(t.surfaceContainerHigh),
-    surfaceContainerHighest: Color(t.surfaceContainerHighest),
-    onSurfaceVariant: Color(t.onSurfaceVariant),
-    outline: Color(t.outline),
-    outlineVariant: Color(t.outlineVariant),
-    inverseSurface: Color(t.inverseSurface),
-    onInverseSurface: Color(t.onInverseSurface),
-    inversePrimary: Color(t.inversePrimary),
-  );
+  static ColorScheme _scheme(ColorTokens t, Brightness brightness) =>
+      ColorScheme(
+        brightness: brightness,
+        primary: Color(t.primary),
+        onPrimary: Color(t.onPrimary),
+        primaryContainer: Color(t.primaryContainer),
+        onPrimaryContainer: Color(t.onPrimaryContainer),
+        secondary: Color(t.secondary),
+        onSecondary: Color(t.onSecondary),
+        tertiary: Color(t.tertiary),
+        onTertiary: Color(t.onTertiary),
+        error: Color(t.error),
+        onError: Color(t.onError),
+        errorContainer: Color(t.errorContainer),
+        onErrorContainer: Color(t.onErrorContainer),
+        surface: Color(t.surface),
+        onSurface: Color(t.onSurface),
+        surfaceContainerLowest: Color(t.surfaceContainerLowest),
+        surfaceContainerLow: Color(t.surfaceContainerLow),
+        surfaceContainer: Color(t.surfaceContainer),
+        surfaceContainerHigh: Color(t.surfaceContainerHigh),
+        surfaceContainerHighest: Color(t.surfaceContainerHighest),
+        onSurfaceVariant: Color(t.onSurfaceVariant),
+        outline: Color(t.outline),
+        outlineVariant: Color(t.outlineVariant),
+        inverseSurface: Color(t.inverseSurface),
+        onInverseSurface: Color(t.onInverseSurface),
+        inversePrimary: Color(t.inversePrimary),
+      );
 }

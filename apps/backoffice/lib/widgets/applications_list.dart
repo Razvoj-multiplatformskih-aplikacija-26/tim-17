@@ -46,14 +46,17 @@ class ApplicationsList extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2),
           child: Semantics(
             selected: isCursor,
-            label: '${item.candidate.name}, ${item.posting.title}, ${item.status.label}',
+            label:
+                '${item.candidate.name}, ${item.posting.title}, ${item.status.label}',
             child: Material(
               color: isCursor
                   ? scheme.primary.withValues(alpha: 0.10)
                   : (isChecked ? theme.jobly.fill : Colors.transparent),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
-                side: isCursor && showFocus ? BorderSide(color: scheme.primary, width: 2) : BorderSide.none,
+                side: isCursor && showFocus
+                    ? BorderSide(color: scheme.primary, width: 2)
+                    : BorderSide.none,
               ),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
@@ -82,7 +85,9 @@ class ApplicationsList extends StatelessWidget {
                             const SizedBox(height: 2),
                             Text(
                               '${item.posting.title} · ${item.posting.city}',
-                              style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: scheme.onSurfaceVariant,
+                              ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ],

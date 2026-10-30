@@ -9,9 +9,16 @@ import 'router.dart';
 import 'theme_mode.dart';
 
 class JoblyApp extends StatefulWidget {
-  const JoblyApp({super.key, required this.dependencies, this.themeMode = ThemeMode.system});
+  const JoblyApp({
+    super.key,
+    required this.dependencies,
+    this.themeMode = ThemeMode.system,
+  });
 
-  static const locale = Locale.fromSubtags(languageCode: 'sr', scriptCode: 'Latn');
+  static const locale = Locale.fromSubtags(
+    languageCode: 'sr',
+    scriptCode: 'Latn',
+  );
 
   final AppDependencies dependencies;
   final ThemeMode themeMode;

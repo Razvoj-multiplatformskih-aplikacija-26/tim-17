@@ -17,17 +17,33 @@ class Sidebar extends StatelessWidget {
     final dark = theme.brightness == Brightness.dark;
     return Container(
       width: compact ? 76 : 248,
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: compact ? 12 : 16),
+      padding: EdgeInsets.symmetric(
+        vertical: 20,
+        horizontal: compact ? 12 : 16,
+      ),
       decoration: BoxDecoration(
-        color: dark ? theme.colorScheme.surfaceContainerLowest : theme.colorScheme.surfaceContainerLow,
-        border: Border(right: BorderSide(color: theme.jobly.separator, width: 0.5)),
+        color: dark
+            ? theme.colorScheme.surfaceContainerLowest
+            : theme.colorScheme.surfaceContainerLow,
+        border: Border(
+          right: BorderSide(color: theme.jobly.separator, width: 0.5),
+        ),
       ),
       child: Column(
-        crossAxisAlignment: compact ? CrossAxisAlignment.center : CrossAxisAlignment.stretch,
+        crossAxisAlignment: compact
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.stretch,
         children: [
           if (compact)
             const GradientMask(
-              child: Text('j', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800, height: 1)),
+              child: Text(
+                'j',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w800,
+                  height: 1,
+                ),
+              ),
             )
           else
             Padding(
@@ -38,12 +54,20 @@ class Sidebar extends StatelessWidget {
                   const SizedBox(width: 8),
                   Flexible(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(color: theme.jobly.fill, borderRadius: BorderRadius.circular(6)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: theme.jobly.fill,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                       child: Text(
                         'backoffice',
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
                   ),
@@ -51,7 +75,13 @@ class Sidebar extends StatelessWidget {
               ),
             ),
           const SizedBox(height: 32),
-          _NavItem(icon: Icons.inbox_rounded, label: 'Prijave', badge: pendingCount, compact: compact, selected: true),
+          _NavItem(
+            icon: Icons.inbox_rounded,
+            label: 'Prijave',
+            badge: pendingCount,
+            compact: compact,
+            selected: true,
+          ),
           const Spacer(),
           ThemeToggleButton(showLabel: !compact),
           const SizedBox(height: 12),
@@ -71,10 +101,16 @@ class Sidebar extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(_staffName, style: theme.textTheme.titleSmall, overflow: TextOverflow.ellipsis),
+                      Text(
+                        _staffName,
+                        style: theme.textTheme.titleSmall,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       Text(
                         'Referent zadruge',
-                        style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ],
                   ),
@@ -111,8 +147,14 @@ class _NavItem extends StatelessWidget {
       height: 20,
       padding: const EdgeInsets.symmetric(horizontal: 6),
       alignment: Alignment.center,
-      decoration: BoxDecoration(gradient: jobly.gradient, borderRadius: BorderRadius.circular(999)),
-      child: Text('$badge', style: theme.textTheme.labelSmall?.copyWith(color: Colors.white)),
+      decoration: BoxDecoration(
+        gradient: jobly.gradient,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        '$badge',
+        style: theme.textTheme.labelSmall?.copyWith(color: Colors.white),
+      ),
     );
     return Semantics(
       selected: selected,
@@ -123,7 +165,10 @@ class _NavItem extends StatelessWidget {
           child: Container(
             height: 44,
             padding: EdgeInsets.symmetric(horizontal: compact ? 0 : 12),
-            decoration: BoxDecoration(color: selected ? jobly.fill : null, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(
+              color: selected ? jobly.fill : null,
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: compact
                 ? Badge(
                     isLabelVisible: badge > 0,
@@ -135,7 +180,9 @@ class _NavItem extends StatelessWidget {
                     children: [
                       Icon(icon, size: 22),
                       const SizedBox(width: 12),
-                      Expanded(child: Text(label, style: theme.textTheme.titleSmall)),
+                      Expanded(
+                        child: Text(label, style: theme.textTheme.titleSmall),
+                      ),
                       if (badge > 0) counter,
                     ],
                   ),

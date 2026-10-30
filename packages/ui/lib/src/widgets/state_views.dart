@@ -18,7 +18,13 @@ class LoadingView extends StatelessWidget {
 }
 
 class EmptyView extends StatelessWidget {
-  const EmptyView({super.key, required this.title, this.message, this.icon = Icons.work_outline_rounded, this.action});
+  const EmptyView({
+    super.key,
+    required this.title,
+    this.message,
+    this.icon = Icons.work_outline_rounded,
+    this.action,
+  });
 
   final String title;
   final String? message;
@@ -27,12 +33,21 @@ class EmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _StateView(icon: icon, title: title, message: message, action: action);
+    return _StateView(
+      icon: icon,
+      title: title,
+      message: message,
+      action: action,
+    );
   }
 }
 
 class FailureView extends StatelessWidget {
-  const FailureView({super.key, required this.onRetry, this.title = 'Podaci trenutno nisu dostupni.'});
+  const FailureView({
+    super.key,
+    required this.onRetry,
+    this.title = 'Podaci trenutno nisu dostupni.',
+  });
 
   final VoidCallback onRetry;
   final String title;
@@ -44,13 +59,23 @@ class FailureView extends StatelessWidget {
       title: title,
       message: 'Proveri internet vezu i pokušaj ponovo.',
       liveRegion: true,
-      action: GradientButton(onPressed: onRetry, icon: Icons.refresh_rounded, label: 'Pokušaj ponovo'),
+      action: GradientButton(
+        onPressed: onRetry,
+        icon: Icons.refresh_rounded,
+        label: 'Pokušaj ponovo',
+      ),
     );
   }
 }
 
 class _StateView extends StatelessWidget {
-  const _StateView({required this.icon, required this.title, this.message, this.action, this.liveRegion = false});
+  const _StateView({
+    required this.icon,
+    required this.title,
+    this.message,
+    this.action,
+    this.liveRegion = false,
+  });
 
   final IconData icon;
   final String title;
@@ -77,7 +102,9 @@ class _StateView extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.bottomLeft,
                     end: Alignment.topRight,
-                    colors: [for (final color in colors) color.withValues(alpha: 0.14)],
+                    colors: [
+                      for (final color in colors) color.withValues(alpha: 0.14),
+                    ],
                   ),
                 ),
                 child: GradientMask(child: Icon(icon, size: 44)),
@@ -86,13 +113,20 @@ class _StateView extends StatelessWidget {
             const SizedBox(height: 20),
             Semantics(
               liveRegion: liveRegion,
-              child: Text(title, style: theme.textTheme.headlineSmall, textAlign: TextAlign.center),
+              child: Text(
+                title,
+                style: theme.textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+              ),
             ),
             if (message != null) ...[
               const SizedBox(height: 6),
               Text(
                 message!,
-                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant, height: 1.35),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  height: 1.35,
+                ),
                 textAlign: TextAlign.center,
               ),
             ],

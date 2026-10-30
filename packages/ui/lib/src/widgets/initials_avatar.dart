@@ -21,11 +21,20 @@ class InitialsAvatar extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: rotated),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: rotated,
+          ),
         ),
         child: Text(
           initialsOf(name),
-          style: TextStyle(color: Colors.white, fontSize: size * 0.38, fontWeight: FontWeight.w700, height: 1),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: size * 0.38,
+            fontWeight: FontWeight.w700,
+            height: 1,
+          ),
         ),
       ),
     );

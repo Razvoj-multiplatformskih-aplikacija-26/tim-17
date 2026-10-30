@@ -94,7 +94,11 @@ final class JobFilters {
   final JobSort sort;
 
   int get activeCount =>
-      cities.length + shifts.length + payTypes.length + categories.length + (minHourlyPay > 0 ? 1 : 0);
+      cities.length +
+      shifts.length +
+      payTypes.length +
+      categories.length +
+      (minHourlyPay > 0 ? 1 : 0);
 
   bool get hasActiveFilters => activeCount > 0;
 

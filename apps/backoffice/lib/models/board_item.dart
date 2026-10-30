@@ -18,7 +18,11 @@ final class Candidate {
 }
 
 final class BoardItem {
-  const BoardItem({required this.application, required this.posting, required this.candidate});
+  const BoardItem({
+    required this.application,
+    required this.posting,
+    required this.candidate,
+  });
 
   final JobApplication application;
   final JobPosting posting;
@@ -42,8 +46,14 @@ final class BoardItem {
 }
 
 Set<ApplicationStatus> nextStatuses(ApplicationStatus from) => switch (from) {
-  ApplicationStatus.pending => {ApplicationStatus.accepted, ApplicationStatus.rejected},
-  ApplicationStatus.accepted => {ApplicationStatus.completed, ApplicationStatus.rejected},
+  ApplicationStatus.pending => {
+    ApplicationStatus.accepted,
+    ApplicationStatus.rejected,
+  },
+  ApplicationStatus.accepted => {
+    ApplicationStatus.completed,
+    ApplicationStatus.rejected,
+  },
   ApplicationStatus.rejected || ApplicationStatus.completed => const {},
 };
 

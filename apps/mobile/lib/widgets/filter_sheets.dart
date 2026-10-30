@@ -13,16 +13,31 @@ Future<Set<T>?> showChoiceSheet<T>(
 }) {
   return _showSheet<Set<T>>(
     context,
-    (context) => _ChoiceSheet<T>(title: title, options: options, selected: selected, labelOf: labelOf, iconOf: iconOf),
+    (context) => _ChoiceSheet<T>(
+      title: title,
+      options: options,
+      selected: selected,
+      labelOf: labelOf,
+      iconOf: iconOf,
+    ),
   );
 }
 
-Future<JobFilters?> showAllFiltersSheet(BuildContext context, JobFilters filters) {
-  return _showSheet<JobFilters>(context, (context) => _AllFiltersSheet(filters: filters));
+Future<JobFilters?> showAllFiltersSheet(
+  BuildContext context,
+  JobFilters filters,
+) {
+  return _showSheet<JobFilters>(
+    context,
+    (context) => _AllFiltersSheet(filters: filters),
+  );
 }
 
 Future<JobSort?> showSortSheet(BuildContext context, JobSort current) {
-  return _showSheet<JobSort>(context, (context) => _SortSheet(current: current));
+  return _showSheet<JobSort>(
+    context,
+    (context) => _SortSheet(current: current),
+  );
 }
 
 Future<T?> _showSheet<T>(BuildContext context, WidgetBuilder builder) {
@@ -32,7 +47,9 @@ Future<T?> _showSheet<T>(BuildContext context, WidgetBuilder builder) {
     isScrollControlled: true,
     showDragHandle: true,
     builder: (context) => ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.88),
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.88,
+      ),
       child: SafeArea(top: false, child: builder(context)),
     ),
   );
@@ -60,7 +77,10 @@ class _ChoiceSheet<T> extends StatefulWidget {
 class _ChoiceSheetState<T> extends State<_ChoiceSheet<T>> {
   late final Set<T> _picked = {...widget.selected};
 
-  void _toggle(T option) => setState(() => _picked.contains(option) ? _picked.remove(option) : _picked.add(option));
+  void _toggle(T option) => setState(
+    () =>
+        _picked.contains(option) ? _picked.remove(option) : _picked.add(option),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +126,8 @@ class _AllFiltersSheet extends StatefulWidget {
 class _AllFiltersSheetState extends State<_AllFiltersSheet> {
   late JobFilters _filters = widget.filters;
 
-  Set<T> _toggled<T>(Set<T> set, T value) => set.contains(value) ? ({...set}..remove(value)) : {...set, value};
+  Set<T> _toggled<T>(Set<T> set, T value) =>
+      set.contains(value) ? ({...set}..remove(value)) : {...set, value};
 
   void _update(JobFilters filters) => setState(() => _filters = filters);
 
@@ -137,7 +158,11 @@ class _AllFiltersSheetState extends State<_AllFiltersSheet> {
                         JoblyChip(
                           label: city,
                           selected: _filters.cities.contains(city),
-                          onTap: () => _update(_filters.copyWith(cities: _toggled(_filters.cities, city))),
+                          onTap: () => _update(
+                            _filters.copyWith(
+                              cities: _toggled(_filters.cities, city),
+                            ),
+                          ),
                         ),
                     ],
                   ),
@@ -151,7 +176,11 @@ class _AllFiltersSheetState extends State<_AllFiltersSheet> {
                           label: shift.label,
                           icon: shift.icon,
                           selected: _filters.shifts.contains(shift),
-                          onTap: () => _update(_filters.copyWith(shifts: _toggled(_filters.shifts, shift))),
+                          onTap: () => _update(
+                            _filters.copyWith(
+                              shifts: _toggled(_filters.shifts, shift),
+                            ),
+                          ),
                         ),
                     ],
                   ),
@@ -165,7 +194,11 @@ class _AllFiltersSheetState extends State<_AllFiltersSheet> {
                           label: pay.label,
                           icon: pay.icon,
                           selected: _filters.payTypes.contains(pay),
-                          onTap: () => _update(_filters.copyWith(payTypes: _toggled(_filters.payTypes, pay))),
+                          onTap: () => _update(
+                            _filters.copyWith(
+                              payTypes: _toggled(_filters.payTypes, pay),
+                            ),
+                          ),
                         ),
                     ],
                   ),
@@ -179,7 +212,14 @@ class _AllFiltersSheetState extends State<_AllFiltersSheet> {
                           label: category.label,
                           icon: category.icon,
                           selected: _filters.categories.contains(category),
-                          onTap: () => _update(_filters.copyWith(categories: _toggled(_filters.categories, category))),
+                          onTap: () => _update(
+                            _filters.copyWith(
+                              categories: _toggled(
+                                _filters.categories,
+                                category,
+                              ),
+                            ),
+                          ),
                         ),
                     ],
                   ),
@@ -188,14 +228,18 @@ class _AllFiltersSheetState extends State<_AllFiltersSheet> {
                   title: 'Minimalna satnica',
                   trailing: Text(
                     minPay == 0 ? 'Bilo koja' : 'od $minPay RSD/h',
-                    style: theme.textTheme.titleSmall?.copyWith(color: theme.colorScheme.primary),
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: theme.colorScheme.primary,
+                    ),
                   ),
                   child: Slider(
                     value: minPay.toDouble(),
                     max: JobFilters.maxHourlyPay.toDouble(),
-                    divisions: JobFilters.maxHourlyPay ~/ JobFilters.hourlyPayStep,
+                    divisions:
+                        JobFilters.maxHourlyPay ~/ JobFilters.hourlyPayStep,
                     label: minPay == 0 ? 'Bilo koja' : '$minPay RSD',
-                    onChanged: (value) => _update(_filters.copyWith(minHourlyPay: value.round())),
+                    onChanged: (value) =>
+                        _update(_filters.copyWith(minHourlyPay: value.round())),
                   ),
                 ),
               ],
@@ -220,7 +264,11 @@ class _SortSheet extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
-          child: Text('Sortiraj po', textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleMedium),
+          child: Text(
+            'Sortiraj po',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
         ),
         Flexible(
           child: SingleChildScrollView(
@@ -244,7 +292,11 @@ class _SortSheet extends StatelessWidget {
 }
 
 class _SheetHeader extends StatelessWidget {
-  const _SheetHeader({required this.title, required this.onReset, required this.onDone});
+  const _SheetHeader({
+    required this.title,
+    required this.onReset,
+    required this.onDone,
+  });
 
   final String title;
   final VoidCallback onReset;
@@ -259,11 +311,20 @@ class _SheetHeader extends StatelessWidget {
         children: [
           TextButton(onPressed: onReset, child: const Text('Poništi')),
           Expanded(
-            child: Text(title, textAlign: TextAlign.center, style: theme.textTheme.titleMedium),
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleMedium,
+            ),
           ),
           TextButton(
             onPressed: onDone,
-            child: Text('Gotovo', style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700)),
+            child: Text(
+              'Gotovo',
+              style: theme.textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
         ],
       ),
@@ -288,7 +349,10 @@ class _GroupedList extends StatelessWidget {
         color: background,
         child: Column(
           children: [
-            for (var i = 0; i < children.length; i++) ...[if (i > 0) const Divider(indent: 52), children[i]],
+            for (var i = 0; i < children.length; i++) ...[
+              if (i > 0) const Divider(indent: 52),
+              children[i],
+            ],
           ],
         ),
       ),
@@ -297,7 +361,12 @@ class _GroupedList extends StatelessWidget {
 }
 
 class _CheckRow extends StatelessWidget {
-  const _CheckRow({required this.label, required this.checked, required this.onTap, this.icon});
+  const _CheckRow({
+    required this.label,
+    required this.checked,
+    required this.onTap,
+    this.icon,
+  });
 
   final String label;
   final bool checked;
@@ -318,14 +387,23 @@ class _CheckRow extends StatelessWidget {
             children: [
               SizedBox(
                 width: 24,
-                child: icon == null ? null : Icon(icon, size: 22, color: theme.colorScheme.onSurfaceVariant),
+                child: icon == null
+                    ? null
+                    : Icon(
+                        icon,
+                        size: 22,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
               ),
               const SizedBox(width: 12),
               Expanded(child: Text(label, style: theme.textTheme.bodyLarge)),
               AnimatedOpacity(
                 duration: const Duration(milliseconds: 150),
                 opacity: checked ? 1 : 0,
-                child: Icon(Icons.check_rounded, color: theme.colorScheme.primary),
+                child: Icon(
+                  Icons.check_rounded,
+                  color: theme.colorScheme.primary,
+                ),
               ),
             ],
           ),
@@ -341,7 +419,8 @@ class _ChipWrap extends StatelessWidget {
   final List<Widget> children;
 
   @override
-  Widget build(BuildContext context) => Wrap(spacing: 8, runSpacing: 8, children: children);
+  Widget build(BuildContext context) =>
+      Wrap(spacing: 8, runSpacing: 8, children: children);
 }
 
 class _Section extends StatelessWidget {
@@ -360,7 +439,12 @@ class _Section extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(child: Text(title, style: Theme.of(context).textTheme.titleMedium)),
+              Expanded(
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
               ?trailing,
             ],
           ),

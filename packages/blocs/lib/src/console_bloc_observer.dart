@@ -12,9 +12,14 @@ final class ConsoleBlocObserver extends BlocObserver {
   }
 
   @override
-  void onTransition(Bloc<dynamic, dynamic> bloc, Transition<dynamic, dynamic> transition) {
+  void onTransition(
+    Bloc<dynamic, dynamic> bloc,
+    Transition<dynamic, dynamic> transition,
+  ) {
     super.onTransition(bloc, transition);
-    log('${bloc.runtimeType} · ${transition.event.runtimeType} → ${transition.nextState}');
+    log(
+      '${bloc.runtimeType} · ${transition.event.runtimeType} → ${transition.nextState}',
+    );
   }
 
   @override

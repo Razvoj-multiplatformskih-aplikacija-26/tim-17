@@ -34,7 +34,8 @@ class ApplicationsTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final allChecked = items.isNotEmpty && items.every((item) => checked.contains(item.id));
+    final allChecked =
+        items.isNotEmpty && items.every((item) => checked.contains(item.id));
     final someChecked = items.any((item) => checked.contains(item.id));
     final headerStyle = theme.textTheme.labelSmall?.copyWith(
       color: theme.colorScheme.onSurfaceVariant,
@@ -136,19 +137,24 @@ class _TableRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final muted = theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant);
+    final muted = theme.textTheme.bodySmall?.copyWith(
+      color: scheme.onSurfaceVariant,
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
       child: Semantics(
         selected: isCursor,
-        label: '${item.candidate.name}, ${item.posting.title}, ${item.status.label}',
+        label:
+            '${item.candidate.name}, ${item.posting.title}, ${item.status.label}',
         child: Material(
           color: isCursor
               ? scheme.primary.withValues(alpha: 0.10)
               : (isChecked ? theme.jobly.fill : Colors.transparent),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: isCursor && showFocus ? BorderSide(color: scheme.primary, width: 2) : BorderSide.none,
+            side: isCursor && showFocus
+                ? BorderSide(color: scheme.primary, width: 2)
+                : BorderSide.none,
           ),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
@@ -170,8 +176,16 @@ class _TableRow extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(item.candidate.name, style: theme.textTheme.titleSmall, overflow: TextOverflow.ellipsis),
-                          Text(item.candidate.faculty, style: muted, overflow: TextOverflow.ellipsis),
+                          Text(
+                            item.candidate.name,
+                            style: theme.textTheme.titleSmall,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            item.candidate.faculty,
+                            style: muted,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ],
                       ),
                     ),
@@ -183,16 +197,23 @@ class _TableRow extends StatelessWidget {
                   children: [
                     Text(
                       item.posting.title,
-                      style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(item.posting.city, style: muted),
                   ],
                 ),
-                pay: Text('${item.posting.hourlyRate.round()} RSD/h', style: theme.textTheme.bodyMedium),
+                pay: Text(
+                  '${item.posting.hourlyRate.round()} RSD/h',
+                  style: theme.textTheme.bodyMedium,
+                ),
                 date: Text(
                   formatDateTime(item.application.appliedAt),
-                  style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
                 ),
                 status: StatusBadge(status: item.status),
               ),

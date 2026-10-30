@@ -65,7 +65,8 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
   }
 
   bool _matches(BoardItem item) {
-    if (_postingFilter != null && item.posting.id != _postingFilter) return false;
+    if (_postingFilter != null && item.posting.id != _postingFilter)
+      return false;
     final query = _search.text.trim().toLowerCase();
     if (query.isEmpty) return true;
     return item.candidate.name.toLowerCase().contains(query) ||
@@ -73,22 +74,27 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
         item.posting.city.toLowerCase().contains(query);
   }
 
-  List<BoardItem> get _matching =>
-      _items.where(_matches).toList()..sort((a, b) => b.application.appliedAt.compareTo(a.application.appliedAt));
+  List<BoardItem> get _matching => _items.where(_matches).toList()
+    ..sort(
+      (a, b) => b.application.appliedAt.compareTo(a.application.appliedAt),
+    );
 
   List<BoardItem> get _visible => [
     for (final item in _matching)
       if (_statusFilter == null || item.status == _statusFilter) item,
   ];
 
-  BoardItem? get _current => _items.where((item) => item.id == _cursor).firstOrNull;
+  BoardItem? get _current =>
+      _items.where((item) => item.id == _cursor).firstOrNull;
 
-  GlobalKey _keyFor(JobApplicationId id) => _cardKeys.putIfAbsent(id, GlobalKey.new);
+  GlobalKey _keyFor(JobApplicationId id) =>
+      _cardKeys.putIfAbsent(id, GlobalKey.new);
 
   void _select(JobApplicationId? id) {
     setState(() => _cursor = id);
     _boardFocus.requestFocus();
-    if (id != null) WidgetsBinding.instance.addPostFrameCallback((_) => _reveal(id));
+    if (id != null)
+      WidgetsBinding.instance.addPostFrameCallback((_) => _reveal(id));
   }
 
   void _reveal(JobApplicationId id) {
@@ -96,7 +102,11 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
     if (_view == BoardView.kanban) {
       final context = _cardKeys[id]?.currentContext;
       if (context != null) {
-        Scrollable.ensureVisible(context, alignment: 0.5, duration: const Duration(milliseconds: 150));
+        Scrollable.ensureVisible(
+          context,
+          alignment: 0.5,
+          duration: const Duration(milliseconds: 150),
+        );
       }
       return;
     }
@@ -110,7 +120,11 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
     if (top < position.pixels) {
       _listScroll.animateTo(top, duration: duration, curve: Curves.easeOut);
     } else if (bottom > position.pixels + position.viewportDimension) {
-      _listScroll.animateTo(bottom - position.viewportDimension, duration: duration, curve: Curves.easeOut);
+      _listScroll.animateTo(
+        bottom - position.viewportDimension,
+        duration: duration,
+        curve: Curves.easeOut,
+      );
     }
   }
 
@@ -148,8 +162,14 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
         ],
     ];
     final current = _current;
-    final column = current == null ? -delta : ApplicationStatus.values.indexOf(current.status);
-    final row = current == null ? 0 : columns[column].indexWhere((item) => item.id == current.id).clamp(0, 1 << 20);
+    final column = current == null
+        ? -delta
+        : ApplicationStatus.values.indexOf(current.status);
+    final row = current == null
+        ? 0
+        : columns[column]
+              .indexWhere((item) => item.id == current.id)
+              .clamp(0, 1 << 20);
     for (var c = column + delta; c >= 0 && c < columns.length; c += delta) {
       if (columns[c].isNotEmpty) {
         _select(columns[c][row.clamp(0, columns[c].length - 1)].id);
@@ -161,13 +181,21 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
   void _toggleCheck([JobApplicationId? id]) {
     final target = id ?? _cursor;
     if (target == null) return;
-    setState(() => _checked.contains(target) ? _checked.remove(target) : _checked.add(target));
+    setState(
+      () => _checked.contains(target)
+          ? _checked.remove(target)
+          : _checked.add(target),
+    );
   }
 
   void _toggleAll() {
     final ids = {for (final item in _visible) item.id};
     if (ids.isEmpty) return;
-    setState(() => _checked.containsAll(ids) ? _checked.removeAll(ids) : _checked.addAll(ids));
+    setState(
+      () => _checked.containsAll(ids)
+          ? _checked.removeAll(ids)
+          : _checked.addAll(ids),
+    );
   }
 
   bool _canMove(JobApplicationId id, ApplicationStatus to) {
@@ -175,17 +203,26 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
     return item != null && nextStatuses(item.status).contains(to);
   }
 
-  Future<void> _changeStatus(ApplicationStatus to, {Set<JobApplicationId>? only}) async {
+  Future<void> _changeStatus(
+    ApplicationStatus to, {
+    Set<JobApplicationId>? only,
+  }) async {
     final bulk = only == null && _checked.isNotEmpty;
     final targets = only ?? (bulk ? {..._checked} : {?_cursor});
     if (targets.isEmpty) return;
-    if (to == ApplicationStatus.rejected && !await _confirmReject(targets.length)) return;
+    if (to == ApplicationStatus.rejected &&
+        !await _confirmReject(targets.length))
+      return;
     if (!mounted) return;
     final changed = targets.where((id) => _canMove(id, to)).length;
     setState(() {
       _items = [
         for (final item in _items)
-          if (targets.contains(item.id) && nextStatuses(item.status).contains(to)) item.withStatus(to) else item,
+          if (targets.contains(item.id) &&
+              nextStatuses(item.status).contains(to))
+            item.withStatus(to)
+          else
+            item,
       ];
       if (bulk) _checked.clear();
     });
@@ -211,10 +248,15 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
         ),
         content: const Text('Odbijena prijava se više ne može prihvatiti.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Otkaži')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Otkaži'),
+          ),
           FilledButton(
             autofocus: true,
-            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
             onPressed: () => Navigator.pop(context, true),
             child: const Text('Odbij'),
           ),
@@ -236,35 +278,64 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
 
   void _focusSearch() {
     _searchFocus.requestFocus();
-    _search.selection = TextSelection(baseOffset: 0, extentOffset: _search.text.length);
+    _search.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: _search.text.length,
+    );
   }
 
   void _setView(BoardView view) {
     setState(() => _view = view);
     final cursor = _cursor;
-    if (cursor != null) WidgetsBinding.instance.addPostFrameCallback((_) => _reveal(cursor));
+    if (cursor != null)
+      WidgetsBinding.instance.addPostFrameCallback((_) => _reveal(cursor));
   }
 
-  void _showShortcuts() => showDialog<void>(context: context, builder: (context) => const ShortcutsDialog());
+  void _showShortcuts() => showDialog<void>(
+    context: context,
+    builder: (context) => const ShortcutsDialog(),
+  );
 
   Map<Type, Action<Intent>> _actions() {
     bool notTyping() => !_typing;
-    GuardedCallbackAction<T> guarded<T extends Intent>(VoidCallback callback, {bool Function()? enabled}) =>
-        GuardedCallbackAction<T>(enabled: enabled ?? notTyping, onInvoke: (_) => callback());
+    GuardedCallbackAction<T> guarded<T extends Intent>(
+      VoidCallback callback, {
+      bool Function()? enabled,
+    }) => GuardedCallbackAction<T>(
+      enabled: enabled ?? notTyping,
+      onInvoke: (_) => callback(),
+    );
     return {
       NextItemIntent: guarded<NextItemIntent>(() => _move(1)),
       PreviousItemIntent: guarded<PreviousItemIntent>(() => _move(-1)),
       NextColumnIntent: guarded<NextColumnIntent>(() => _moveColumn(1)),
-      PreviousColumnIntent: guarded<PreviousColumnIntent>(() => _moveColumn(-1)),
-      ToggleCheckIntent: guarded<ToggleCheckIntent>(_toggleCheck, enabled: () => _boardFocus.hasPrimaryFocus),
+      PreviousColumnIntent: guarded<PreviousColumnIntent>(
+        () => _moveColumn(-1),
+      ),
+      ToggleCheckIntent: guarded<ToggleCheckIntent>(
+        _toggleCheck,
+        enabled: () => _boardFocus.hasPrimaryFocus,
+      ),
       CheckAllIntent: guarded<CheckAllIntent>(_toggleAll),
-      AcceptIntent: guarded<AcceptIntent>(() => _changeStatus(ApplicationStatus.accepted)),
-      RejectIntent: guarded<RejectIntent>(() => _changeStatus(ApplicationStatus.rejected)),
-      CompleteIntent: guarded<CompleteIntent>(() => _changeStatus(ApplicationStatus.completed)),
-      BoardEscapeIntent: CallbackAction<BoardEscapeIntent>(onInvoke: (_) => _escape()),
+      AcceptIntent: guarded<AcceptIntent>(
+        () => _changeStatus(ApplicationStatus.accepted),
+      ),
+      RejectIntent: guarded<RejectIntent>(
+        () => _changeStatus(ApplicationStatus.rejected),
+      ),
+      CompleteIntent: guarded<CompleteIntent>(
+        () => _changeStatus(ApplicationStatus.completed),
+      ),
+      BoardEscapeIntent: CallbackAction<BoardEscapeIntent>(
+        onInvoke: (_) => _escape(),
+      ),
       FocusSearchIntent: guarded<FocusSearchIntent>(_focusSearch),
-      ShowTableIntent: guarded<ShowTableIntent>(() => _setView(BoardView.table)),
-      ShowKanbanIntent: guarded<ShowKanbanIntent>(() => _setView(BoardView.kanban)),
+      ShowTableIntent: guarded<ShowTableIntent>(
+        () => _setView(BoardView.table),
+      ),
+      ShowKanbanIntent: guarded<ShowKanbanIntent>(
+        () => _setView(BoardView.kanban),
+      ),
       ShowShortcutsIntent: guarded<ShowShortcutsIntent>(_showShortcuts),
     };
   }
@@ -274,14 +345,19 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
-        final layout = width >= 1200 ? _Layout.wide : (width >= 900 ? _Layout.medium : _Layout.narrow);
+        final layout = width >= 1200
+            ? _Layout.wide
+            : (width >= 900 ? _Layout.medium : _Layout.narrow);
         final narrow = layout == _Layout.narrow;
-        _rowExtent = narrow ? ApplicationsList.rowExtent : ApplicationsTable.rowExtent;
+        _rowExtent = narrow
+            ? ApplicationsList.rowExtent
+            : ApplicationsTable.rowExtent;
         final current = _current;
         final matching = _matching;
         final visible = _visible;
         final counts = {
-          for (final status in ApplicationStatus.values) status: matching.where((item) => item.status == status).length,
+          for (final status in ApplicationStatus.values)
+            status: matching.where((item) => item.status == status).length,
         };
         final showFocus = _boardFocus.hasFocus && !_typing;
         final empty = _items.isEmpty
@@ -367,9 +443,12 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
                       child: Center(
                         child: BulkActionBar(
                           count: _checked.length,
-                          onAccept: () => _changeStatus(ApplicationStatus.accepted),
-                          onReject: () => _changeStatus(ApplicationStatus.rejected),
-                          onComplete: () => _changeStatus(ApplicationStatus.completed),
+                          onAccept: () =>
+                              _changeStatus(ApplicationStatus.accepted),
+                          onReject: () =>
+                              _changeStatus(ApplicationStatus.rejected),
+                          onComplete: () =>
+                              _changeStatus(ApplicationStatus.completed),
                           onClear: () => setState(_checked.clear),
                         ),
                       ),
@@ -412,7 +491,8 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
                           child: DetailPanel(
                             item: current,
                             onClose: () => _select(null),
-                            onChange: (to) => _changeStatus(to, only: {current.id}),
+                            onChange: (to) =>
+                                _changeStatus(to, only: {current.id}),
                           ),
                         ),
                     ],

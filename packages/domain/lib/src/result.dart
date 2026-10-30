@@ -1,6 +1,5 @@
 import 'package:meta/meta.dart';
 
-
 import 'errors.dart';
 
 sealed class Result<T> {

@@ -28,7 +28,8 @@ class _JobsScreenState extends State<JobsScreen> {
 
   void _apply(JobFilters filters) => setState(() => _filters = filters);
 
-  Set<T> _toggled<T>(Set<T> set, T value) => set.contains(value) ? ({...set}..remove(value)) : {...set, value};
+  Set<T> _toggled<T>(Set<T> set, T value) =>
+      set.contains(value) ? ({...set}..remove(value)) : {...set, value};
 
   Future<void> _pickCities() async {
     final cities = await showChoiceSheet<String>(
@@ -87,7 +88,10 @@ class _JobsScreenState extends State<JobsScreen> {
         slivers: [
           const JoblyTopBar(),
           const SliverToBoxAdapter(
-            child: LargeTitle(title: 'Pronađi posao', subtitle: 'Studentski i omladinski poslovi'),
+            child: LargeTitle(
+              title: 'Pronađi posao',
+              subtitle: 'Studentski i omladinski poslovi',
+            ),
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -101,7 +105,11 @@ class _JobsScreenState extends State<JobsScreen> {
           SliverToBoxAdapter(
             child: CategoryStories(
               selected: _filters.categories,
-              onToggle: (category) => _apply(_filters.copyWith(categories: _toggled(_filters.categories, category))),
+              onToggle: (category) => _apply(
+                _filters.copyWith(
+                  categories: _toggled(_filters.categories, category),
+                ),
+              ),
             ),
           ),
           SliverPersistentHeader(
@@ -117,27 +125,41 @@ class _JobsScreenState extends State<JobsScreen> {
             ),
           ),
           SliverToBoxAdapter(
-            child: _ResultsRow(count: _jobCount, sort: _filters.sort, onSort: _pickSort),
+            child: _ResultsRow(
+              count: _jobCount,
+              sort: _filters.sort,
+              onSort: _pickSort,
+            ),
           ),
           if (_filters.hasActiveFilters)
             SliverToBoxAdapter(
-              child: _ActiveFilters(filters: _filters, onChanged: _apply, onClearAll: _clearAll),
+              child: _ActiveFilters(
+                filters: _filters,
+                onChanged: _apply,
+                onClearAll: _clearAll,
+              ),
             ),
           SliverFillRemaining(
             hasScrollBody: false,
             child: Padding(
-              padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.paddingOf(context).bottom,
+              ),
               child: _filters.isNarrowed
                   ? EmptyView(
                       icon: Icons.search_off_rounded,
                       title: 'Nema oglasa za ovu pretragu',
                       message: 'Probaj sa drugim gradom, smenom ili satnicom.',
-                      action: OutlinedButton(onPressed: _clearAll, child: const Text('Poništi filtere')),
+                      action: OutlinedButton(
+                        onPressed: _clearAll,
+                        child: const Text('Poništi filtere'),
+                      ),
                     )
                   : const EmptyView(
                       icon: Icons.work_outline_rounded,
                       title: 'Oglasi stižu uskoro',
-                      message: 'Kad poslodavci objave poslove, videćeš ih ovde.',
+                      message:
+                          'Kad poslodavci objave poslove, videćeš ih ovde.',
                     ),
             ),
           ),
@@ -168,20 +190,44 @@ class _FilterBar extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       children: [
-        JoblyChip(label: 'Filteri', icon: Icons.tune_rounded, count: filters.activeCount, onTap: onAll),
+        JoblyChip(
+          label: 'Filteri',
+          icon: Icons.tune_rounded,
+          count: filters.activeCount,
+          onTap: onAll,
+        ),
         const SizedBox(width: 8),
-        JoblyChip(label: 'Grad', count: filters.cities.length, showChevron: true, onTap: onCities),
+        JoblyChip(
+          label: 'Grad',
+          count: filters.cities.length,
+          showChevron: true,
+          onTap: onCities,
+        ),
         const SizedBox(width: 8),
-        JoblyChip(label: 'Smena', count: filters.shifts.length, showChevron: true, onTap: onShifts),
+        JoblyChip(
+          label: 'Smena',
+          count: filters.shifts.length,
+          showChevron: true,
+          onTap: onShifts,
+        ),
         const SizedBox(width: 8),
-        JoblyChip(label: 'Isplata', count: filters.payTypes.length, showChevron: true, onTap: onPayTypes),
+        JoblyChip(
+          label: 'Isplata',
+          count: filters.payTypes.length,
+          showChevron: true,
+          onTap: onPayTypes,
+        ),
       ],
     );
   }
 }
 
 class _ResultsRow extends StatelessWidget {
-  const _ResultsRow({required this.count, required this.sort, required this.onSort});
+  const _ResultsRow({
+    required this.count,
+    required this.sort,
+    required this.onSort,
+  });
 
   final int count;
   final JobSort sort;
@@ -197,7 +243,9 @@ class _ResultsRow extends StatelessWidget {
           Expanded(
             child: Text(
               '$count ${pluralize(count, one: 'oglas', few: 'oglasa', many: 'oglasa')}',
-              style: theme.textTheme.titleSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              style: theme.textTheme.titleSmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
           Semantics(
@@ -218,7 +266,11 @@ class _ResultsRow extends StatelessWidget {
 }
 
 class _ActiveFilters extends StatelessWidget {
-  const _ActiveFilters({required this.filters, required this.onChanged, required this.onClearAll});
+  const _ActiveFilters({
+    required this.filters,
+    required this.onChanged,
+    required this.onClearAll,
+  });
 
   final JobFilters filters;
   final ValueChanged<JobFilters> onChanged;
@@ -237,22 +289,32 @@ class _ActiveFilters extends StatelessWidget {
           for (final city in filters.cities)
             RemovableTag(
               label: city,
-              onRemove: () => onChanged(filters.copyWith(cities: without(filters.cities, city))),
+              onRemove: () => onChanged(
+                filters.copyWith(cities: without(filters.cities, city)),
+              ),
             ),
           for (final shift in filters.shifts)
             RemovableTag(
               label: shift.label,
-              onRemove: () => onChanged(filters.copyWith(shifts: without(filters.shifts, shift))),
+              onRemove: () => onChanged(
+                filters.copyWith(shifts: without(filters.shifts, shift)),
+              ),
             ),
           for (final pay in filters.payTypes)
             RemovableTag(
               label: pay.label,
-              onRemove: () => onChanged(filters.copyWith(payTypes: without(filters.payTypes, pay))),
+              onRemove: () => onChanged(
+                filters.copyWith(payTypes: without(filters.payTypes, pay)),
+              ),
             ),
           for (final category in filters.categories)
             RemovableTag(
               label: category.label,
-              onRemove: () => onChanged(filters.copyWith(categories: without(filters.categories, category))),
+              onRemove: () => onChanged(
+                filters.copyWith(
+                  categories: without(filters.categories, category),
+                ),
+              ),
             ),
           if (filters.minHourlyPay > 0)
             RemovableTag(

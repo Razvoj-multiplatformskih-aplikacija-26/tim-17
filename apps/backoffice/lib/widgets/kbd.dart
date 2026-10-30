@@ -20,7 +20,9 @@ class Kbd extends StatelessWidget {
       child: Text(
         label,
         textAlign: TextAlign.center,
-        style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
       ),
     );
   }
@@ -40,7 +42,12 @@ class KeyHint extends StatelessWidget {
       children: [
         Kbd(keyLabel),
         const SizedBox(width: 6),
-        Text(label, style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
       ],
     );
   }
