@@ -7,6 +7,9 @@ import 'package:ui/ui.dart';
 import 'dependencies.dart';
 import 'router.dart';
 import 'theme_mode.dart';
+//mock
+import 'package:use_cases/use_cases.dart';
+import 'package:blocs/blocs.dart';
 
 class JoblyApp extends StatefulWidget {
   const JoblyApp({super.key, required this.dependencies, this.themeMode = ThemeMode.system});
@@ -33,23 +36,33 @@ class _JoblyAppState extends State<JoblyApp> {
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
       value: widget.dependencies,
-      child: BlocProvider(
-        create: (_) => ThemeModeCubit(widget.themeMode),
-        child: BlocBuilder<ThemeModeCubit, ThemeMode>(
-          builder: (context, themeMode) => MaterialApp.router(
-            title: 'Jobly',
-            debugShowCheckedModeBanner: false,
-            theme: JoblyTheme.light(),
-            darkTheme: JoblyTheme.dark(),
-            themeMode: themeMode,
-            locale: JoblyApp.locale,
-            supportedLocales: const [JoblyApp.locale],
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            routerConfig: _router,
+      child: RepositoryProvider<JobRepository>(
+        create: (context) => FakeJobRepository(),
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => ThemeModeCubit(widget.themeMode)),
+            BlocProvider(
+              create: (context) => JobsBloc(
+                jobRepository: context.read<JobRepository>(),
+              )..add(const JobsRequested()),
+            ),
+          ],
+          child: BlocBuilder<ThemeModeCubit, ThemeMode>(
+            builder: (context, themeMode) => MaterialApp.router(
+              title: 'Jobly',
+              debugShowCheckedModeBanner: false,
+              theme: JoblyTheme.light(),
+              darkTheme: JoblyTheme.dark(),
+              themeMode: themeMode,
+              locale: JoblyApp.locale,
+              supportedLocales: const [JoblyApp.locale],
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              routerConfig: _router,
+            ),
           ),
         ),
       ),
