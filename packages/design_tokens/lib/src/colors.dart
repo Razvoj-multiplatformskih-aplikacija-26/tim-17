@@ -152,13 +152,20 @@ final class JoblyTokens {
 }
 
 final class StatusTokens {
-  const StatusTokens({required this.pending, required this.accepted, required this.rejected, required this.completed});
+  const StatusTokens({
+    required this.pending,
+    required this.accepted,
+    required this.rejected,
+    required this.completed,
+    required this.withdrawn,
+  });
 
   static const light = StatusTokens(
     pending: 0xFFD97706,
     accepted: 0xFF16A34A,
     rejected: 0xFFDC2626,
     completed: 0xFF4F6BFF,
+    withdrawn: 0xFF8E8E93,
   );
 
   static const dark = StatusTokens(
@@ -166,10 +173,12 @@ final class StatusTokens {
     accepted: 0xFF30D158,
     rejected: 0xFFFF6961,
     completed: 0xFF7A9BFF,
+    withdrawn: 0xFF98989D,
   );
 
   final int pending;
   final int accepted;
   final int rejected;
   final int completed;
+  final int withdrawn;
 }

@@ -8,6 +8,7 @@ extension ApplicationStatusLabel on ApplicationStatus {
     ApplicationStatus.accepted => 'Prihvaćena',
     ApplicationStatus.rejected => 'Odbijena',
     ApplicationStatus.completed => 'Završena',
+    ApplicationStatus.withdrawn => 'Povučena',
   };
 
   String get groupLabel => switch (this) {
@@ -15,6 +16,7 @@ extension ApplicationStatusLabel on ApplicationStatus {
     ApplicationStatus.accepted => 'Prihvaćene',
     ApplicationStatus.rejected => 'Odbijene',
     ApplicationStatus.completed => 'Završene',
+    ApplicationStatus.withdrawn => 'Povučene',
   };
 
   IconData get icon => switch (this) {
@@ -22,6 +24,7 @@ extension ApplicationStatusLabel on ApplicationStatus {
     ApplicationStatus.accepted => Icons.check_circle_outline_rounded,
     ApplicationStatus.rejected => Icons.cancel_outlined,
     ApplicationStatus.completed => Icons.task_alt_rounded,
+    ApplicationStatus.withdrawn => Icons.undo_rounded,
   };
 
   Color colorIn(Brightness brightness) {
@@ -31,6 +34,7 @@ extension ApplicationStatusLabel on ApplicationStatus {
       ApplicationStatus.accepted => tokens.accepted,
       ApplicationStatus.rejected => tokens.rejected,
       ApplicationStatus.completed => tokens.completed,
+      ApplicationStatus.withdrawn => tokens.withdrawn,
     });
   }
 }
@@ -69,7 +73,14 @@ class StatusBadge extends StatelessWidget {
         children: [
           StatusDot(status: status, size: 7),
           const SizedBox(width: 6),
-          Text(status.label, style: theme.textTheme.labelMedium?.copyWith(color: color)),
+          Flexible(
+            child: Text(
+              status.label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.labelMedium?.copyWith(color: color),
+            ),
+          ),
         ],
       ),
     );

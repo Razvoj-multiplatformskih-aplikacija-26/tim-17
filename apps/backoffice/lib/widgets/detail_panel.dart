@@ -11,12 +11,14 @@ class DetailPanel extends StatelessWidget {
     required this.item,
     required this.onClose,
     required this.onChange,
+    required this.actions,
     this.fullWidth = false,
   });
 
   final BoardItem item;
   final VoidCallback onClose;
   final ValueChanged<ApplicationStatus> onChange;
+  final Set<ApplicationStatus> actions;
   final bool fullWidth;
 
   @override
@@ -24,7 +26,7 @@ class DetailPanel extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final dark = theme.brightness == Brightness.dark;
-    final next = nextStatuses(item.status);
+    final next = actions;
     final muted = theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant);
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -57,13 +59,13 @@ class DetailPanel extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    InitialsAvatar(name: item.candidate.name, size: 64),
+                    InitialsAvatar(name: item.candidate.fullName, size: 64),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(item.candidate.name, style: theme.textTheme.headlineSmall),
+                          Text(item.candidate.fullName, style: theme.textTheme.headlineSmall),
                           const SizedBox(height: 2),
                           Text(item.candidate.faculty, style: muted),
                           const SizedBox(height: 8),
@@ -113,7 +115,7 @@ class DetailPanel extends StatelessWidget {
                     color: dark ? scheme.surfaceContainerHigh : scheme.surfaceContainer,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text(item.candidate.letter, style: theme.textTheme.bodyMedium?.copyWith(height: 1.4)),
+                  child: Text(item.letter, style: theme.textTheme.bodyMedium?.copyWith(height: 1.4)),
                 ),
               ],
             ),
@@ -129,7 +131,7 @@ class DetailPanel extends StatelessWidget {
                       children: [
                         Icon(Icons.lock_outline_rounded, size: 18, color: scheme.onSurfaceVariant),
                         const SizedBox(width: 8),
-                        Text('Prijava je u završnom stanju.', style: muted),
+                        Flexible(child: Text('Prijava je u završnom stanju.', style: muted)),
                       ],
                     )
                   : Column(

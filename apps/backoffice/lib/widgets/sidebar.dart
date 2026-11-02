@@ -1,6 +1,9 @@
+import 'package:domain/domain.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui/ui.dart';
 
+import '../dependencies.dart';
 import 'theme_toggle.dart';
 
 class Sidebar extends StatelessWidget {
@@ -9,11 +12,14 @@ class Sidebar extends StatelessWidget {
   final bool compact;
   final int pendingCount;
 
-  static const _staffName = 'Marija Kostić';
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final staff = context.read<BackofficeDependencies>().staff;
+    final role = switch (staff.role) {
+      UserRole.employer => 'Poslodavac',
+      UserRole.staff || UserRole.student => 'Referent zadruge',
+    };
     final dark = theme.brightness == Brightness.dark;
     return Container(
       width: compact ? 76 : 248,
@@ -58,24 +64,21 @@ class Sidebar extends StatelessWidget {
           Divider(color: theme.jobly.separator),
           const SizedBox(height: 12),
           if (compact)
-            const Tooltip(
-              message: '$_staffName · referent',
-              child: InitialsAvatar(name: _staffName, size: 36),
+            Tooltip(
+              message: '${staff.fullName} · ${role.toLowerCase()}',
+              child: InitialsAvatar(name: staff.fullName, size: 36),
             )
           else
             Row(
               children: [
-                const InitialsAvatar(name: _staffName, size: 36),
+                InitialsAvatar(name: staff.fullName, size: 36),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(_staffName, style: theme.textTheme.titleSmall, overflow: TextOverflow.ellipsis),
-                      Text(
-                        'Referent zadruge',
-                        style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                      ),
+                      Text(staff.fullName, style: theme.textTheme.titleSmall, overflow: TextOverflow.ellipsis),
+                      Text(role, style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
                     ],
                   ),
                 ),

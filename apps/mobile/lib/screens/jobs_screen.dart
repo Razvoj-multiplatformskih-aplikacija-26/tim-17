@@ -1,13 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:ui/ui.dart';
-
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blocs/blocs.dart';
-import 'package:domain/domain.dart';
+import 'package:domain/domain.dart' show JobPosting;
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:ui/ui.dart';
 
 import '../models/job_filters.dart';
 import '../widgets/category_stories.dart';
 import '../widgets/filter_sheets.dart';
+import '../widgets/job_card.dart';
 import '../widgets/job_search_field.dart';
 import '../widgets/top_bar.dart';
 
@@ -20,9 +21,12 @@ class JobsScreen extends StatefulWidget {
 
 class _JobsScreenState extends State<JobsScreen> {
   final _search = TextEditingController();
-  JobFilters _filters = const JobFilters();
 
-  static const _jobCount = 0;
+  @override
+  void initState() {
+    super.initState();
+    _search.text = context.read<JobsBloc>().state.filters.query;
+  }
 
   @override
   void dispose() {
@@ -30,7 +34,9 @@ class _JobsScreenState extends State<JobsScreen> {
     super.dispose();
   }
 
-  void _apply(JobFilters filters) => setState(() => _filters = filters);
+  JobFilters get _filters => context.read<JobsBloc>().state.filters;
+
+  void _apply(JobFilters filters) => context.read<JobsBloc>().add(JobFiltersChanged(filters));
 
   Set<T> _toggled<T>(Set<T> set, T value) => set.contains(value) ? ({...set}..remove(value)) : {...set, value};
 
@@ -89,134 +95,107 @@ class _JobsScreenState extends State<JobsScreen> {
     return Scaffold(
       body: BlocBuilder<JobsBloc, JobsState>(
         builder: (context, state) {
-          if (state is JobsLoadInProgress || state is JobsInitial) {
-            return CustomScrollView(
-              slivers: [
-                const JoblyTopBar(),
-                const SliverToBoxAdapter(
-                  child: LargeTitle(title: 'Pronađi posao', subtitle: 'Studentski i omladinski poslovi'),
-                ),
-                const SliverFillRemaining(child: LoadingView()),
-              ],
-            );
-          }
+          const header = [
+            JoblyTopBar(),
+            SliverToBoxAdapter(
+              child: LargeTitle(title: 'Pronađi posao', subtitle: 'Studentski i omladinski poslovi'),
+            ),
+          ];
 
-          if (state is JobsLoadFailure) {
-            return CustomScrollView(
-              slivers: [
-                const JoblyTopBar(),
-                const SliverToBoxAdapter(
-                  child: LargeTitle(title: 'Pronađi posao', subtitle: 'Studentski i omladinski poslovi'),
-                ),
-                SliverFillRemaining(
-                  child: FailureView(
-                    onRetry: () => context.read<JobsBloc>().add(const JobsRequested()),
-                  ),
-                ),
-              ],
-            );
-          }
-
-          if (state is JobsLoadSuccess) {
-            final jobs = state.jobs;
-            // Ovde možete primeniti filtere ukoliko želite, za početak prikazujemo sve iz state.jobs
-
-            return CustomScrollView(
-              slivers: [
-                const JoblyTopBar(),
-                const SliverToBoxAdapter(
-                  child: LargeTitle(title: 'Pronađi posao', subtitle: 'Studentski i omladinski poslovi'),
-                ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-                    child: JobSearchField(
-                      controller: _search,
-                      onChanged: (query) => _apply(_filters.copyWith(query: query)),
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: CategoryStories(
-                    selected: _filters.categories,
-                    onToggle: (category) => _apply(_filters.copyWith(categories: _toggled(_filters.categories, category))),
-                  ),
-                ),
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: PinnedFrostedBar(
-                    child: _FilterBar(
-                      filters: _filters,
-                      onAll: _openAllFilters,
-                      onCities: _pickCities,
-                      onShifts: _pickShifts,
-                      onPayTypes: _pickPayTypes,
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: _ResultsRow(count: jobs.length, sort: _filters.sort, onSort: _pickSort),
-                ),
-                if (_filters.hasActiveFilters)
-                  SliverToBoxAdapter(
-                    child: _ActiveFilters(filters: _filters, onChanged: _apply, onClearAll: _clearAll),
-                  ),
-                if (jobs.isEmpty)
+          switch (state) {
+            case JobsLoading():
+              return const CustomScrollView(
+                slivers: [
+                  ...header,
+                  SliverFillRemaining(child: LoadingView()),
+                ],
+              );
+            case JobsFailure():
+              return CustomScrollView(
+                slivers: [
+                  ...header,
                   SliverFillRemaining(
-                    hasScrollBody: false,
+                    child: FailureView(onRetry: () => context.read<JobsBloc>().add(const JobsRetried())),
+                  ),
+                ],
+              );
+            case JobsReady():
+              final filters = state.filters;
+              final jobs = switch (state) {
+                JobsLoaded(:final visible) => visible,
+                JobsEmpty() => const <JobPosting>[],
+              };
+              return CustomScrollView(
+                slivers: [
+                  ...header,
+                  SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
-                      child: EmptyView(
-                        icon: Icons.search_off_rounded,
-                        title: 'Nema oglasa za ovu pretragu',
-                        message: 'Probaj sa drugim gradom, smenom ili satnicom.',
-                        action: OutlinedButton(onPressed: _clearAll, child: const Text('Poništi filtere')),
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+                      child: JobSearchField(
+                        controller: _search,
+                        onChanged: (query) => _apply(filters.copyWith(query: query)),
                       ),
                     ),
-                  )
-                else
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                          (context, index) {
+                  ),
+                  SliverToBoxAdapter(
+                    child: CategoryStories(
+                      selected: filters.categories,
+                      onToggle: (category) =>
+                          _apply(filters.copyWith(categories: _toggled(filters.categories, category))),
+                    ),
+                  ),
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: PinnedFrostedBar(
+                      child: _FilterBar(
+                        filters: filters,
+                        onAll: _openAllFilters,
+                        onCities: _pickCities,
+                        onShifts: _pickShifts,
+                        onPayTypes: _pickPayTypes,
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _ResultsRow(count: jobs.length, sort: filters.sort, onSort: _pickSort),
+                  ),
+                  if (filters.hasActiveFilters)
+                    SliverToBoxAdapter(
+                      child: _ActiveFilters(filters: filters, onChanged: _apply, onClearAll: _clearAll),
+                    ),
+                  if (state is JobsEmpty)
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+                        child: state.isFiltered
+                            ? EmptyView(
+                                icon: Icons.search_off_rounded,
+                                title: 'Nema oglasa za ovu pretragu',
+                                message: 'Probaj sa drugim gradom, smenom ili satnicom.',
+                                action: OutlinedButton(onPressed: _clearAll, child: const Text('Poništi filtere')),
+                              )
+                            : const EmptyView(
+                                icon: Icons.work_outline_rounded,
+                                title: 'Oglasi stižu uskoro',
+                                message: 'Trenutno nema otvorenih oglasa. Svrati ponovo malo kasnije.',
+                              ),
+                      ),
+                    )
+                  else
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
                         final job = jobs[index];
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                          child: Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(job.title, style: Theme.of(context).textTheme.titleMedium),
-                                  const SizedBox(height: 6),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.place_outlined, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                                      const SizedBox(width: 4),
-                                      Text(job.city, style: Theme.of(context).textTheme.bodyMedium),
-                                      const Spacer(),
-                                      Text(
-                                        '${job.hourlyRate.round()} RSD/h',
-                                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                          color: Theme.of(context).colorScheme.primary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                          child: JobCard(job: job, onTap: () => context.push('/jobs/${job.id.value}')),
                         );
-                      },
-                      childCount: jobs.length,
+                      }, childCount: jobs.length),
                     ),
-                  ),
-              ],
-            );
+                  SliverToBoxAdapter(child: SizedBox(height: 24 + MediaQuery.paddingOf(context).bottom)),
+                ],
+              );
           }
-
-          return const Scaffold(body: SizedBox.shrink());
         },
       ),
     );

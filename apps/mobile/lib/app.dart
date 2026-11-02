@@ -1,3 +1,4 @@
+import 'package:blocs/blocs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -7,9 +8,6 @@ import 'package:ui/ui.dart';
 import 'dependencies.dart';
 import 'router.dart';
 import 'theme_mode.dart';
-//mock
-import 'package:use_cases/use_cases.dart';
-import 'package:blocs/blocs.dart';
 
 class JoblyApp extends StatefulWidget {
   const JoblyApp({super.key, required this.dependencies, this.themeMode = ThemeMode.system});
@@ -34,35 +32,42 @@ class _JoblyAppState extends State<JoblyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final dependencies = widget.dependencies;
     return RepositoryProvider.value(
-      value: widget.dependencies,
-      child: RepositoryProvider<JobRepository>(
-        create: (context) => FakeJobRepository(),
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider(create: (_) => ThemeModeCubit(widget.themeMode)),
-            BlocProvider(
-              create: (context) => JobsBloc(
-                jobRepository: context.read<JobRepository>(),
-              )..add(const JobsRequested()),
-            ),
-          ],
-          child: BlocBuilder<ThemeModeCubit, ThemeMode>(
-            builder: (context, themeMode) => MaterialApp.router(
-              title: 'Jobly',
-              debugShowCheckedModeBanner: false,
-              theme: JoblyTheme.light(),
-              darkTheme: JoblyTheme.dark(),
-              themeMode: themeMode,
-              locale: JoblyApp.locale,
-              supportedLocales: const [JoblyApp.locale],
-              localizationsDelegates: const [
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              routerConfig: _router,
-            ),
+      value: dependencies,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => ThemeModeCubit(widget.themeMode)),
+          BlocProvider(
+            create: (_) => JobsBloc(
+              getJobs: dependencies.getJobs,
+              applyForJob: dependencies.applyForJob,
+              student: dependencies.student,
+            )..add(const JobsRequested()),
+          ),
+          BlocProvider(
+            create: (_) => MyApplicationsBloc(
+              getMyApplications: dependencies.getMyApplications,
+              withdrawApplication: dependencies.withdrawApplication,
+              student: dependencies.student,
+            )..add(const MyApplicationsRequested()),
+          ),
+        ],
+        child: BlocBuilder<ThemeModeCubit, ThemeMode>(
+          builder: (context, themeMode) => MaterialApp.router(
+            title: 'Jobly',
+            debugShowCheckedModeBanner: false,
+            theme: JoblyTheme.light(),
+            darkTheme: JoblyTheme.dark(),
+            themeMode: themeMode,
+            locale: JoblyApp.locale,
+            supportedLocales: const [JoblyApp.locale],
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            routerConfig: _router,
           ),
         ),
       ),

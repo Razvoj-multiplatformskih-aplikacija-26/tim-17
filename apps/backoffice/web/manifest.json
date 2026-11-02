@@ -1,6 +1,6 @@
 {
-    "name": "backoffice",
-    "short_name": "backoffice",
+    "name": "Jobly Backoffice",
+    "short_name": "Jobly",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

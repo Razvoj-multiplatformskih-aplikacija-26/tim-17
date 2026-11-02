@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "rs.tim17.jobly" "\0"
-            VALUE "FileDescription", "backoffice" "\0"
+            VALUE "FileDescription", "Jobly Backoffice" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "backoffice" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 rs.tim17.jobly. All rights reserved." "\0"
             VALUE "OriginalFilename", "backoffice.exe" "\0"
-            VALUE "ProductName", "backoffice" "\0"
+            VALUE "ProductName", "Jobly Backoffice" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

@@ -139,20 +139,32 @@ abstract final class JoblyTheme {
     );
   }
 
-  static TextTheme _textTheme(TextTheme t) => t.copyWith(
-    displaySmall: t.displaySmall?.copyWith(fontSize: 34, fontWeight: FontWeight.w700, letterSpacing: -0.8, height: 1.1),
-    headlineMedium: t.headlineMedium?.copyWith(fontSize: 28, fontWeight: FontWeight.w700, letterSpacing: -0.6),
-    headlineSmall: t.headlineSmall?.copyWith(fontSize: 22, fontWeight: FontWeight.w700, letterSpacing: -0.4),
-    titleLarge: t.titleLarge?.copyWith(fontSize: 20, fontWeight: FontWeight.w600, letterSpacing: -0.3),
-    titleMedium: t.titleMedium?.copyWith(fontSize: 17, fontWeight: FontWeight.w600, letterSpacing: -0.3),
-    titleSmall: t.titleSmall?.copyWith(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: -0.2),
-    bodyLarge: t.bodyLarge?.copyWith(fontSize: 17, letterSpacing: -0.3),
-    bodyMedium: t.bodyMedium?.copyWith(fontSize: 15, letterSpacing: -0.2),
-    bodySmall: t.bodySmall?.copyWith(fontSize: 13, letterSpacing: -0.1),
-    labelLarge: t.labelLarge?.copyWith(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: -0.2),
-    labelMedium: t.labelMedium?.copyWith(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: -0.1),
-    labelSmall: t.labelSmall?.copyWith(fontSize: 11, fontWeight: FontWeight.w600, letterSpacing: 0),
+  static TextStyle? _style(TextStyle? base, TypeStyleTokens tokens) => base?.copyWith(
+    fontFamily: tokens.family,
+    package: 'ui',
+    fontSize: tokens.size,
+    fontWeight: FontWeight.values[tokens.weight ~/ 100 - 1],
+    height: tokens.height,
+    letterSpacing: tokens.letterSpacing,
   );
+
+  static TextTheme _textTheme(TextTheme base) {
+    final t = base.apply(fontFamily: FontFamilies.body, package: 'ui');
+    return t.copyWith(
+      displaySmall: _style(t.displaySmall, TypeScale.displaySmall),
+      headlineMedium: _style(t.headlineMedium, TypeScale.headlineMedium),
+      headlineSmall: _style(t.headlineSmall, TypeScale.headlineSmall),
+      titleLarge: _style(t.titleLarge, TypeScale.titleLarge),
+      titleMedium: _style(t.titleMedium, TypeScale.titleMedium),
+      titleSmall: _style(t.titleSmall, TypeScale.titleSmall),
+      bodyLarge: _style(t.bodyLarge, TypeScale.bodyLarge),
+      bodyMedium: _style(t.bodyMedium, TypeScale.bodyMedium),
+      bodySmall: _style(t.bodySmall, TypeScale.bodySmall),
+      labelLarge: _style(t.labelLarge, TypeScale.labelLarge),
+      labelMedium: _style(t.labelMedium, TypeScale.labelMedium),
+      labelSmall: _style(t.labelSmall, TypeScale.labelSmall),
+    );
+  }
 
   static ColorScheme _scheme(ColorTokens t, Brightness brightness) => ColorScheme(
     brightness: brightness,
