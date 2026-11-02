@@ -46,7 +46,7 @@ class ApplicationsList extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2),
           child: Semantics(
             selected: isCursor,
-            label: '${item.candidate.name}, ${item.posting.title}, ${item.status.label}',
+            label: '${item.candidate.fullName}, ${item.posting.title}, ${item.status.label}',
             child: Material(
               color: isCursor
                   ? scheme.primary.withValues(alpha: 0.10)
@@ -65,9 +65,9 @@ class ApplicationsList extends StatelessWidget {
                       Checkbox(
                         value: isChecked,
                         onChanged: (_) => onToggle(item.id),
-                        semanticLabel: 'Označi ${item.candidate.name}',
+                        semanticLabel: 'Označi ${item.candidate.fullName}',
                       ),
-                      InitialsAvatar(name: item.candidate.name, size: 40),
+                      InitialsAvatar(name: item.candidate.fullName, size: 40),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -75,7 +75,7 @@ class ApplicationsList extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              item.candidate.name,
+                              item.candidate.fullName,
                               style: theme.textTheme.titleSmall,
                               overflow: TextOverflow.ellipsis,
                             ),

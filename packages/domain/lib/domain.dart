@@ -1,6 +1,13 @@
+export 'src/access_policy.dart';
+export 'src/application_rules.dart';
+export 'src/board_filters.dart';
 export 'src/errors.dart';
 export 'src/identifiers.dart';
+export 'src/job_filters.dart';
 export 'src/result.dart';
+export 'src/models/application_record.dart';
+export 'src/models/application_status.dart';
 export 'src/models/job_application.dart';
 export 'src/models/job_posting.dart';
+export 'src/models/motivation_letter.dart';
 export 'src/models/user.dart';

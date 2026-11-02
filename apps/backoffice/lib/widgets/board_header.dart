@@ -18,6 +18,7 @@ class BoardHeader extends StatelessWidget {
     required this.onView,
     required this.onShortcuts,
     required this.compact,
+    this.demo,
   });
 
   final int total;
@@ -29,6 +30,7 @@ class BoardHeader extends StatelessWidget {
   final ValueChanged<BoardView> onView;
   final VoidCallback onShortcuts;
   final bool compact;
+  final Widget? demo;
 
   @override
   Widget build(BuildContext context) {
@@ -36,17 +38,23 @@ class BoardHeader extends StatelessWidget {
     final title = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Semantics(
-          header: true,
-          child: Text(
-            'Prijave kandidata',
-            style: compact ? theme.textTheme.headlineMedium : theme.textTheme.displaySmall,
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Semantics(
+            header: true,
+            child: Text(
+              'Prijave kandidata',
+              style: compact ? theme.textTheme.headlineMedium : theme.textTheme.displaySmall,
+            ),
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '$total ${pluralize(total, one: 'prijava', few: 'prijave', many: 'prijava')} · '
           '$postings ${pluralize(postings, one: 'oglas', few: 'oglasa', many: 'oglasa')}',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
         ),
       ],
@@ -63,7 +71,7 @@ class BoardHeader extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Row(children: [JoblyWordmark(size: 24), Spacer(), ThemeToggleButton()]),
+            Row(children: [const JoblyWordmark(size: 24), const Spacer(), ?demo, const ThemeToggleButton()]),
             const SizedBox(height: 12),
             title,
             const SizedBox(height: 16),
@@ -93,6 +101,7 @@ class BoardHeader extends StatelessWidget {
           ViewSwitcher(value: view, onChanged: onView),
           const SizedBox(width: 4),
           shortcutsButton,
+          ?demo,
         ],
       ),
     );

@@ -213,7 +213,7 @@ class _KanbanCard extends StatelessWidget {
     final muted = theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant);
     return Semantics(
       selected: isCursor,
-      label: '${item.candidate.name}, ${item.posting.title}, ${item.status.label}',
+      label: '${item.candidate.fullName}, ${item.posting.title}, ${item.status.label}',
       child: Material(
         color: dark ? scheme.surfaceContainerHigh : scheme.surface,
         borderRadius: BorderRadius.circular(14),
@@ -240,13 +240,17 @@ class _KanbanCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    InitialsAvatar(name: item.candidate.name, size: 32),
+                    InitialsAvatar(name: item.candidate.fullName, size: 32),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(item.candidate.name, style: theme.textTheme.titleSmall, overflow: TextOverflow.ellipsis),
+                          Text(
+                            item.candidate.fullName,
+                            style: theme.textTheme.titleSmall,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           Text(item.candidate.faculty, style: muted, overflow: TextOverflow.ellipsis),
                         ],
                       ),
@@ -257,7 +261,7 @@ class _KanbanCard extends StatelessWidget {
                         value: isChecked,
                         onChanged: (_) => onToggle(),
                         visualDensity: VisualDensity.compact,
-                        semanticLabel: 'Označi ${item.candidate.name}',
+                        semanticLabel: 'Označi ${item.candidate.fullName}',
                       ),
                     ),
                   ],

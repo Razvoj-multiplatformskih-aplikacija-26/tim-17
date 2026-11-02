@@ -1,3 +1,4 @@
+import 'package:blocs/blocs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -31,10 +32,27 @@ class _JoblyAppState extends State<JoblyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final dependencies = widget.dependencies;
     return RepositoryProvider.value(
-      value: widget.dependencies,
-      child: BlocProvider(
-        create: (_) => ThemeModeCubit(widget.themeMode),
+      value: dependencies,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => ThemeModeCubit(widget.themeMode)),
+          BlocProvider(
+            create: (_) => JobsBloc(
+              getJobs: dependencies.getJobs,
+              applyForJob: dependencies.applyForJob,
+              student: dependencies.student,
+            )..add(const JobsRequested()),
+          ),
+          BlocProvider(
+            create: (_) => MyApplicationsBloc(
+              getMyApplications: dependencies.getMyApplications,
+              withdrawApplication: dependencies.withdrawApplication,
+              student: dependencies.student,
+            )..add(const MyApplicationsRequested()),
+          ),
+        ],
         child: BlocBuilder<ThemeModeCubit, ThemeMode>(
           builder: (context, themeMode) => MaterialApp.router(
             title: 'Jobly',

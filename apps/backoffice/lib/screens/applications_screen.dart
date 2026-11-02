@@ -1,8 +1,11 @@
+import 'package:blocs/blocs.dart';
 import 'package:domain/domain.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui/ui.dart';
 
 import '../models/board_item.dart';
+import '../widgets/demo_menu.dart';
 import '../shortcuts.dart';
 import '../widgets/applications_list.dart';
 import '../widgets/applications_table.dart';
@@ -23,10 +26,7 @@ class ApplicationsScreen extends StatefulWidget {
 }
 
 class _ApplicationsScreenState extends State<ApplicationsScreen> {
-  List<BoardItem> _items = const [];
   BoardView _view = BoardView.table;
-  ApplicationStatus? _statusFilter;
-  JobPostingId? _postingFilter;
   JobApplicationId? _cursor;
   final _checked = <JobApplicationId>{};
   final _search = TextEditingController();
@@ -56,32 +56,28 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
 
   bool get _typing => _searchFocus.hasFocus;
 
-  List<JobPosting> get _postings {
-    final seen = <JobPostingId>{};
-    return [
-      for (final item in _items)
-        if (seen.add(item.posting.id)) item.posting,
-    ];
-  }
+  ApplicationsBoardBloc get _bloc => context.read<ApplicationsBoardBloc>();
 
-  bool _matches(BoardItem item) {
-    if (_postingFilter != null && item.posting.id != _postingFilter) return false;
-    final query = _search.text.trim().toLowerCase();
-    if (query.isEmpty) return true;
-    return item.candidate.name.toLowerCase().contains(query) ||
-        item.posting.title.toLowerCase().contains(query) ||
-        item.posting.city.toLowerCase().contains(query);
-  }
+  BoardLoaded? get _loaded => switch (_bloc.state) {
+    final BoardLoaded state => state,
+    _ => null,
+  };
 
-  List<BoardItem> get _matching =>
-      _items.where(_matches).toList()..sort((a, b) => b.application.appliedAt.compareTo(a.application.appliedAt));
+  BoardFilters get _filters => _loaded?.filters ?? const BoardFilters();
+
+  void _filter(BoardFilters filters) => _bloc.add(BoardFiltersChanged(filters));
 
   List<BoardItem> get _visible => [
-    for (final item in _matching)
-      if (_statusFilter == null || item.status == _statusFilter) item,
+    for (final record in _loaded?.visible ?? const <ApplicationRecord>[]) BoardItem(record),
   ];
 
-  BoardItem? get _current => _items.where((item) => item.id == _cursor).firstOrNull;
+  BoardItem? get _current => switch (_cursor) {
+    final id? => switch (_loaded?.find(id)) {
+      final record? => BoardItem(record),
+      null => null,
+    },
+    null => null,
+  };
 
   GlobalKey _keyFor(JobApplicationId id) => _cardKeys.putIfAbsent(id, GlobalKey.new);
 
@@ -170,31 +166,31 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
     setState(() => _checked.containsAll(ids) ? _checked.removeAll(ids) : _checked.addAll(ids));
   }
 
-  bool _canMove(JobApplicationId id, ApplicationStatus to) {
-    final item = _items.where((item) => item.id == id).firstOrNull;
-    return item != null && nextStatuses(item.status).contains(to);
-  }
+  bool _canMove(JobApplicationId id, ApplicationStatus to) => _loaded?.canMove(id, to) ?? false;
 
   Future<void> _changeStatus(ApplicationStatus to, {Set<JobApplicationId>? only}) async {
+    if (_loaded?.isBusy ?? true) return;
     final bulk = only == null && _checked.isNotEmpty;
     final targets = only ?? (bulk ? {..._checked} : {?_cursor});
     if (targets.isEmpty) return;
     if (to == ApplicationStatus.rejected && !await _confirmReject(targets.length)) return;
     if (!mounted) return;
-    final changed = targets.where((id) => _canMove(id, to)).length;
-    setState(() {
-      _items = [
-        for (final item in _items)
-          if (targets.contains(item.id) && nextStatuses(item.status).contains(to)) item.withStatus(to) else item,
-      ];
-      if (bulk) _checked.clear();
-    });
+    _bloc.add(StatusChangeRequested(targets, to));
+    if (bulk) setState(_checked.clear);
     _boardFocus.requestFocus();
-    final skipped = targets.length - changed;
-    final message = changed == 0
-        ? 'Ova promena nije moguća za ${targets.length == 1 ? 'izabranu prijavu' : 'izabrane prijave'}.'
-        : '${to.doneLabel}: $changed ${pluralize(changed, one: 'prijava', few: 'prijave', many: 'prijava')}'
-              '${skipped > 0 ? ' · preskočeno $skipped' : ''}';
+  }
+
+  void _showNotice(BoardNotice notice) {
+    _bloc.add(const BoardNoticeAcknowledged());
+    String applications(int count) => pluralize(count, one: 'prijava', few: 'prijave', many: 'prijava');
+    final message = switch (notice) {
+      StatusChanged(:final to, :final changed, :final skipped) =>
+        '${to.doneLabel}: $changed ${applications(changed)}${skipped > 0 ? ' · preskočeno $skipped' : ''}',
+      StatusChangeSkipped(:final count) =>
+        'Ova promena nije moguća za ${count == 1 ? 'izabranu prijavu' : 'izabrane prijave'}.',
+      StatusChangeRejected(:final error) => error.message,
+      StatusChangeFailed() => 'Promena nije sačuvana. Proveri internet vezu i pokušaj ponovo.',
+    };
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message), width: 440));
@@ -271,158 +267,170 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final width = constraints.maxWidth;
-        final layout = width >= 1200 ? _Layout.wide : (width >= 900 ? _Layout.medium : _Layout.narrow);
-        final narrow = layout == _Layout.narrow;
-        _rowExtent = narrow ? ApplicationsList.rowExtent : ApplicationsTable.rowExtent;
-        final current = _current;
-        final matching = _matching;
-        final visible = _visible;
-        final counts = {
-          for (final status in ApplicationStatus.values) status: matching.where((item) => item.status == status).length,
-        };
-        final showFocus = _boardFocus.hasFocus && !_typing;
-        final empty = _items.isEmpty
-            ? const EmptyView(
-                icon: Icons.inbox_outlined,
-                title: 'Još nema prijava',
-                message: 'Kad studenti počnu da se prijavljuju na oglase, prijave će se pojaviti ovde.',
-              )
-            : const EmptyView(
-                icon: Icons.search_off_rounded,
-                title: 'Nema prijava za ove filtere',
-                message: 'Promeni status, oglas ili pretragu.',
-              );
-
-        final board = switch (_view) {
-          BoardView.kanban => KanbanBoard(
-            items: visible,
-            cursor: _cursor,
-            checked: _checked,
-            showFocus: showFocus,
-            onTap: _select,
-            onToggle: _toggleCheck,
-            canMove: _canMove,
-            onMove: (id, to) => _changeStatus(to, only: {id}),
-            keyFor: _keyFor,
-            horizontalPadding: narrow ? 16 : 32,
-          ),
-          BoardView.table when narrow => ApplicationsList(
-            items: visible,
-            cursor: _cursor,
-            checked: _checked,
-            showFocus: showFocus,
-            controller: _listScroll,
-            onTap: _select,
-            onToggle: _toggleCheck,
-            empty: empty,
-          ),
-          BoardView.table => ApplicationsTable(
-            items: visible,
-            cursor: _cursor,
-            checked: _checked,
-            showFocus: showFocus,
-            controller: _listScroll,
-            onTap: _select,
-            onToggle: _toggleCheck,
-            onToggleAll: _toggleAll,
-            empty: empty,
-          ),
-        };
-
-        Widget main = Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            BoardHeader(
-              total: _items.length,
-              postings: _postings.length,
-              search: _search,
-              searchFocus: _searchFocus,
-              onQuery: (_) => setState(() {}),
-              view: _view,
-              onView: _setView,
-              onShortcuts: _showShortcuts,
-              compact: narrow,
-            ),
-            BoardToolbar(
-              statusFilter: _statusFilter,
-              counts: counts,
-              onStatus: (status) => setState(() => _statusFilter = status),
-              postings: _postings,
-              postingFilter: _postingFilter,
-              onPosting: (posting) => setState(() => _postingFilter = posting),
-              compact: narrow,
-            ),
-            Expanded(
-              child: Stack(
-                children: [
-                  Positioned.fill(child: board),
-                  if (_checked.isNotEmpty)
-                    Positioned(
-                      left: 16,
-                      right: 16,
-                      bottom: 24,
-                      child: Center(
-                        child: BulkActionBar(
-                          count: _checked.length,
-                          onAccept: () => _changeStatus(ApplicationStatus.accepted),
-                          onReject: () => _changeStatus(ApplicationStatus.rejected),
-                          onComplete: () => _changeStatus(ApplicationStatus.completed),
-                          onClear: () => setState(_checked.clear),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        );
-        if (narrow && current != null) {
-          main = DetailPanel(
-            item: current,
-            fullWidth: true,
-            onClose: () => _select(null),
-            onChange: (to) => _changeStatus(to, only: {current.id}),
+    return BlocConsumer<ApplicationsBoardBloc, ApplicationsBoardState>(
+      listenWhen: (previous, current) => current is BoardLoaded && current.notice != null,
+      listener: (context, state) => _showNotice((state as BoardLoaded).notice!),
+      builder: (context, state) => LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          final layout = width >= 1200 ? _Layout.wide : (width >= 900 ? _Layout.medium : _Layout.narrow);
+          final narrow = layout == _Layout.narrow;
+          _rowExtent = narrow ? ApplicationsList.rowExtent : ApplicationsTable.rowExtent;
+          final loaded = state is BoardLoaded ? state : null;
+          final current = _current;
+          final visible = _visible;
+          final counts = loaded?.counts ?? const <ApplicationStatus, int>{};
+          final postings = loaded?.postings ?? const <JobPosting>[];
+          final filters = _filters;
+          final showFocus = _boardFocus.hasFocus && !_typing;
+          const empty = EmptyView(
+            icon: Icons.search_off_rounded,
+            title: 'Nema prijava za ove filtere',
+            message: 'Promeni status, oglas ili pretragu.',
           );
-        }
 
-        return Shortcuts(
-          shortcuts: boardShortcuts(),
-          child: Actions(
-            actions: _actions(),
-            child: Focus(
-              focusNode: _boardFocus,
-              autofocus: true,
-              child: Scaffold(
-                body: SafeArea(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      if (!narrow)
-                        Sidebar(
-                          compact: layout == _Layout.medium,
-                          pendingCount: counts[ApplicationStatus.pending] ?? 0,
-                        ),
-                      Expanded(child: main),
-                      if (!narrow && current != null)
-                        SizedBox(
-                          width: layout == _Layout.wide ? 400 : 340,
-                          child: DetailPanel(
-                            item: current,
-                            onClose: () => _select(null),
-                            onChange: (to) => _changeStatus(to, only: {current.id}),
+          final board = switch (_view) {
+            BoardView.kanban => KanbanBoard(
+              items: visible,
+              cursor: _cursor,
+              checked: _checked,
+              showFocus: showFocus,
+              onTap: _select,
+              onToggle: _toggleCheck,
+              canMove: _canMove,
+              onMove: (id, to) => _changeStatus(to, only: {id}),
+              keyFor: _keyFor,
+              horizontalPadding: narrow ? 16 : 32,
+            ),
+            BoardView.table when narrow => ApplicationsList(
+              items: visible,
+              cursor: _cursor,
+              checked: _checked,
+              showFocus: showFocus,
+              controller: _listScroll,
+              onTap: _select,
+              onToggle: _toggleCheck,
+              empty: empty,
+            ),
+            BoardView.table => ApplicationsTable(
+              items: visible,
+              cursor: _cursor,
+              checked: _checked,
+              showFocus: showFocus,
+              controller: _listScroll,
+              onTap: _select,
+              onToggle: _toggleCheck,
+              onToggleAll: _toggleAll,
+              empty: empty,
+            ),
+          };
+
+          final content = switch (state) {
+            BoardLoading() => const LoadingView(),
+            BoardFailure() => FailureView(onRetry: () => _bloc.add(const BoardRetried())),
+            BoardEmpty() => const EmptyView(
+              icon: Icons.inbox_outlined,
+              title: 'Još nema prijava',
+              message: 'Kad studenti počnu da se prijavljuju na oglase, prijave će se pojaviti ovde.',
+            ),
+            BoardLoaded() => board,
+          };
+
+          Widget main = Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              BoardHeader(
+                total: loaded?.records.length ?? 0,
+                postings: postings.length,
+                search: _search,
+                searchFocus: _searchFocus,
+                onQuery: (query) => _filter(filters.copyWith(query: query)),
+                view: _view,
+                onView: _setView,
+                onShortcuts: _showShortcuts,
+                demo: const DemoMenu(),
+                compact: narrow,
+              ),
+              BoardToolbar(
+                statusFilter: filters.status,
+                counts: counts,
+                onStatus: (status) => _filter(filters.copyWith(status: () => status)),
+                postings: postings,
+                postingFilter: filters.jobId,
+                onPosting: (posting) => _filter(filters.copyWith(jobId: () => posting)),
+                compact: narrow,
+              ),
+              Expanded(
+                child: Stack(
+                  children: [
+                    Positioned.fill(child: content),
+                    if (_checked.isNotEmpty)
+                      Positioned(
+                        left: 16,
+                        right: 16,
+                        bottom: 24,
+                        child: Center(
+                          child: BulkActionBar(
+                            count: _checked.length,
+                            onAccept: () => _changeStatus(ApplicationStatus.accepted),
+                            onReject: () => _changeStatus(ApplicationStatus.rejected),
+                            onComplete: () => _changeStatus(ApplicationStatus.completed),
+                            onClear: () => setState(_checked.clear),
                           ),
                         ),
-                    ],
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          );
+          if (narrow && current != null) {
+            main = DetailPanel(
+              item: current,
+              fullWidth: true,
+              onClose: () => _select(null),
+              onChange: (to) => _changeStatus(to, only: {current.id}),
+              actions: loaded?.actionsFor(current.id) ?? const {},
+            );
+          }
+
+          return Shortcuts(
+            shortcuts: boardShortcuts(),
+            child: Actions(
+              actions: _actions(),
+              child: Focus(
+                focusNode: _boardFocus,
+                autofocus: true,
+                child: Scaffold(
+                  body: SafeArea(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (!narrow)
+                          Sidebar(
+                            compact: layout == _Layout.medium,
+                            pendingCount: counts[ApplicationStatus.pending] ?? 0,
+                          ),
+                        Expanded(child: main),
+                        if (!narrow && current != null)
+                          SizedBox(
+                            width: layout == _Layout.wide ? 400 : 340,
+                            child: DetailPanel(
+                              item: current,
+                              onClose: () => _select(null),
+                              onChange: (to) => _changeStatus(to, only: {current.id}),
+                              actions: loaded?.actionsFor(current.id) ?? const {},
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

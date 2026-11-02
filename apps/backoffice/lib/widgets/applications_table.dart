@@ -141,7 +141,7 @@ class _TableRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
       child: Semantics(
         selected: isCursor,
-        label: '${item.candidate.name}, ${item.posting.title}, ${item.status.label}',
+        label: '${item.candidate.fullName}, ${item.posting.title}, ${item.status.label}',
         child: Material(
           color: isCursor
               ? scheme.primary.withValues(alpha: 0.10)
@@ -159,18 +159,22 @@ class _TableRow extends StatelessWidget {
                 check: Checkbox(
                   value: isChecked,
                   onChanged: (_) => onToggle(),
-                  semanticLabel: 'Označi ${item.candidate.name}',
+                  semanticLabel: 'Označi ${item.candidate.fullName}',
                 ),
                 candidate: Row(
                   children: [
-                    InitialsAvatar(name: item.candidate.name, size: 36),
+                    InitialsAvatar(name: item.candidate.fullName, size: 36),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(item.candidate.name, style: theme.textTheme.titleSmall, overflow: TextOverflow.ellipsis),
+                          Text(
+                            item.candidate.fullName,
+                            style: theme.textTheme.titleSmall,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           Text(item.candidate.faculty, style: muted, overflow: TextOverflow.ellipsis),
                         ],
                       ),

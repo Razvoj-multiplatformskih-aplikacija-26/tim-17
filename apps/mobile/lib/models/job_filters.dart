@@ -1,4 +1,7 @@
+import 'package:domain/domain.dart';
 import 'package:flutter/material.dart';
+
+export 'package:domain/domain.dart' show JobCategory, JobFilters, JobSort, PayType, WorkShift;
 
 const serbianCities = [
   'Beograd',
@@ -15,110 +18,80 @@ const serbianCities = [
   'Smederevo',
 ];
 
-enum WorkShift {
-  morning('Prva smena', Icons.wb_sunny_outlined),
-  afternoon('Druga smena', Icons.wb_twilight_rounded),
-  night('Noćna smena', Icons.nightlight_outlined),
-  weekend('Vikend', Icons.weekend_outlined),
-  flexible('Fleksibilno', Icons.schedule_rounded);
+extension WorkShiftLabel on WorkShift {
+  String get label => switch (this) {
+    WorkShift.morning => 'Prva smena',
+    WorkShift.afternoon => 'Druga smena',
+    WorkShift.night => 'Noćna smena',
+    WorkShift.weekend => 'Vikend',
+    WorkShift.flexible => 'Fleksibilno',
+  };
 
-  const WorkShift(this.label, this.icon);
-
-  final String label;
-  final IconData icon;
+  IconData get icon => switch (this) {
+    WorkShift.morning => Icons.wb_sunny_outlined,
+    WorkShift.afternoon => Icons.wb_twilight_rounded,
+    WorkShift.night => Icons.nightlight_outlined,
+    WorkShift.weekend => Icons.weekend_outlined,
+    WorkShift.flexible => Icons.schedule_rounded,
+  };
 }
 
-enum PayType {
-  daily('Dnevnica', Icons.payments_outlined),
-  hourly('Po satu', Icons.timer_outlined),
-  perTask('Po zadatku', Icons.task_alt_rounded);
+extension PayTypeLabel on PayType {
+  String get label => switch (this) {
+    PayType.daily => 'Dnevnica',
+    PayType.hourly => 'Po satu',
+    PayType.perTask => 'Po zadatku',
+  };
 
-  const PayType(this.label, this.icon);
-
-  final String label;
-  final IconData icon;
+  IconData get icon => switch (this) {
+    PayType.daily => Icons.payments_outlined,
+    PayType.hourly => Icons.timer_outlined,
+    PayType.perTask => Icons.task_alt_rounded,
+  };
 }
 
-enum JobCategory {
-  hospitality('Ugostiteljstvo', Icons.local_cafe_outlined),
-  retail('Prodaja', Icons.storefront_outlined),
-  warehouse('Magacin', Icons.inventory_2_outlined),
-  promotion('Promocije', Icons.campaign_outlined),
-  office('Administracija', Icons.desk_outlined),
-  delivery('Dostava', Icons.delivery_dining_outlined),
-  events('Događaji', Icons.celebration_outlined),
-  it('IT', Icons.code_rounded);
+extension JobCategoryLabel on JobCategory {
+  String get label => switch (this) {
+    JobCategory.hospitality => 'Ugostiteljstvo',
+    JobCategory.retail => 'Prodaja',
+    JobCategory.warehouse => 'Magacin',
+    JobCategory.promotion => 'Promocije',
+    JobCategory.office => 'Administracija',
+    JobCategory.delivery => 'Dostava',
+    JobCategory.events => 'Događaji',
+    JobCategory.it => 'IT',
+  };
 
-  const JobCategory(this.label, this.icon);
-
-  final String label;
-  final IconData icon;
+  IconData get icon => switch (this) {
+    JobCategory.hospitality => Icons.local_cafe_outlined,
+    JobCategory.retail => Icons.storefront_outlined,
+    JobCategory.warehouse => Icons.inventory_2_outlined,
+    JobCategory.promotion => Icons.campaign_outlined,
+    JobCategory.office => Icons.desk_outlined,
+    JobCategory.delivery => Icons.delivery_dining_outlined,
+    JobCategory.events => Icons.celebration_outlined,
+    JobCategory.it => Icons.code_rounded,
+  };
 }
 
-enum JobSort {
-  newest('Najnovije', Icons.fiber_new_outlined),
-  payHighest('Najveća satnica', Icons.trending_up_rounded),
-  payLowest('Najmanja satnica', Icons.trending_down_rounded),
-  dailyHighest('Najveća dnevnica', Icons.payments_outlined),
-  hoursShortest('Najkraće radno vreme', Icons.hourglass_bottom_rounded),
-  hoursLongest('Najduže radno vreme', Icons.hourglass_top_rounded),
-  startSoonest('Najskoriji početak', Icons.event_available_outlined);
+extension JobSortLabel on JobSort {
+  String get label => switch (this) {
+    JobSort.newest => 'Najnovije',
+    JobSort.payHighest => 'Najveća satnica',
+    JobSort.payLowest => 'Najmanja satnica',
+    JobSort.dailyHighest => 'Najveća dnevnica',
+    JobSort.hoursShortest => 'Najkraće radno vreme',
+    JobSort.hoursLongest => 'Najduže radno vreme',
+    JobSort.startSoonest => 'Najskoriji početak',
+  };
 
-  const JobSort(this.label, this.icon);
-
-  final String label;
-  final IconData icon;
-}
-
-@immutable
-final class JobFilters {
-  const JobFilters({
-    this.query = '',
-    this.cities = const {},
-    this.shifts = const {},
-    this.payTypes = const {},
-    this.categories = const {},
-    this.minHourlyPay = 0,
-    this.sort = JobSort.newest,
-  });
-
-  static const maxHourlyPay = 1500;
-  static const hourlyPayStep = 50;
-
-  final String query;
-  final Set<String> cities;
-  final Set<WorkShift> shifts;
-  final Set<PayType> payTypes;
-  final Set<JobCategory> categories;
-  final int minHourlyPay;
-  final JobSort sort;
-
-  int get activeCount =>
-      cities.length + shifts.length + payTypes.length + categories.length + (minHourlyPay > 0 ? 1 : 0);
-
-  bool get hasActiveFilters => activeCount > 0;
-
-  bool get isNarrowed => hasActiveFilters || query.trim().isNotEmpty;
-
-  JobFilters copyWith({
-    String? query,
-    Set<String>? cities,
-    Set<WorkShift>? shifts,
-    Set<PayType>? payTypes,
-    Set<JobCategory>? categories,
-    int? minHourlyPay,
-    JobSort? sort,
-  }) {
-    return JobFilters(
-      query: query ?? this.query,
-      cities: cities ?? this.cities,
-      shifts: shifts ?? this.shifts,
-      payTypes: payTypes ?? this.payTypes,
-      categories: categories ?? this.categories,
-      minHourlyPay: minHourlyPay ?? this.minHourlyPay,
-      sort: sort ?? this.sort,
-    );
-  }
-
-  JobFilters cleared() => JobFilters(query: query, sort: sort);
+  IconData get icon => switch (this) {
+    JobSort.newest => Icons.fiber_new_outlined,
+    JobSort.payHighest => Icons.trending_up_rounded,
+    JobSort.payLowest => Icons.trending_down_rounded,
+    JobSort.dailyHighest => Icons.payments_outlined,
+    JobSort.hoursShortest => Icons.hourglass_bottom_rounded,
+    JobSort.hoursLongest => Icons.hourglass_top_rounded,
+    JobSort.startSoonest => Icons.event_available_outlined,
+  };
 }
