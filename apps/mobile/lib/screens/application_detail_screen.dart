@@ -8,9 +8,10 @@ import 'package:ui/ui.dart';
 import '../widgets/info_row.dart';
 
 class ApplicationDetailScreen extends StatelessWidget {
-  const ApplicationDetailScreen({super.key, required this.id});
+  const ApplicationDetailScreen({super.key, required this.id, this.justApplied = false});
 
   final JobApplicationId id;
+  final bool justApplied;
 
   void _onNotice(BuildContext context, MyApplicationsNotice notice) {
     final messenger = ScaffoldMessenger.of(context);
@@ -28,8 +29,23 @@ class ApplicationDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void goHome() => context.go('/');
     return Scaffold(
-      appBar: AppBar(title: const Text('Prijava')),
+      appBar: AppBar(
+        title: const Text('Prijava'),
+        leading: context.canPop()
+            ? null
+            : IconButton(tooltip: 'Nazad na poslove', icon: const Icon(Icons.close_rounded), onPressed: goHome),
+      ),
+      bottomNavigationBar: justApplied
+          ? SafeArea(
+              minimum: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+              child: Center(
+                heightFactor: 1,
+                child: GradientButton(onPressed: goHome, icon: Icons.home_rounded, label: 'Nazad na poslove'),
+              ),
+            )
+          : null,
       body: BlocConsumer<MyApplicationsBloc, MyApplicationsState>(
         listenWhen: (previous, current) => current is MyApplicationsLoaded && current.notice != null,
         listener: (context, state) => _onNotice(context, (state as MyApplicationsLoaded).notice!),

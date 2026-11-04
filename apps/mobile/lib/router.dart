@@ -38,7 +38,10 @@ GoRouter createRouter() {
       ),
       GoRoute(
         path: '/applications/:id',
-        builder: (context, state) => ApplicationDetailScreen(id: JobApplicationId(state.pathParameters['id']!)),
+        builder: (context, state) => ApplicationDetailScreen(
+          id: JobApplicationId(state.pathParameters['id']!),
+          justApplied: state.extra == true,
+        ),
       ),
     ],
   );

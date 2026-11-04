@@ -22,8 +22,12 @@ int remainingSlots(JobPosting job, List<JobApplication> applications) {
 int activeApplicationsOf(UserId studentId, List<JobApplication> applications) =>
     applications.where((a) => a.studentId == studentId && a.isActive).length;
 
+JobApplication? applicationFor(UserId studentId, JobPostingId jobId, List<JobApplication> applications) => applications
+    .where((a) => a.studentId == studentId && a.jobId == jobId && a.status != ApplicationStatus.withdrawn)
+    .firstOrNull;
+
 bool hasApplied(UserId studentId, JobPostingId jobId, List<JobApplication> applications) =>
-    applications.any((a) => a.studentId == studentId && a.jobId == jobId && a.status != ApplicationStatus.withdrawn);
+    applicationFor(studentId, jobId, applications) != null;
 
 Result<void> canApply({
   required JobPosting job,
