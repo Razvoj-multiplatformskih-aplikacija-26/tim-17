@@ -42,7 +42,7 @@ class _ApplyScreenState extends State<ApplyScreen> {
       case ApplicationSubmitted(:final record):
         context.read<MyApplicationsBloc>().add(const MyApplicationsRefreshed());
         messenger.showSnackBar(const SnackBar(content: Text('Prijava je poslata.')));
-        context.go('/applications/${record.id.value}');
+        context.go('/applications/${record.id.value}', extra: true);
       case ApplicationRejected(:final error):
         messenger.showSnackBar(SnackBar(content: Text(error.message)));
       case ApplicationFailed():

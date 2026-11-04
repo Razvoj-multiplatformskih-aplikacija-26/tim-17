@@ -51,10 +51,7 @@ class _JobDetail extends StatelessWidget {
         _ => const [],
       },
     );
-    final existing = applications
-        .where((r) => r.job.id == job.id && r.status != ApplicationStatus.withdrawn)
-        .firstOrNull;
-    final applied = hasApplied(studentId, job.id, [for (final r in applications) r.application]);
+    final existing = applicationFor(studentId, job.id, [for (final r in applications) r.application]);
 
     return ListView(
       padding: EdgeInsets.fromLTRB(20, 8, 20, 32 + MediaQuery.paddingOf(context).bottom),
@@ -80,7 +77,7 @@ class _JobDetail extends StatelessWidget {
           children: [Text(job.description, style: theme.textTheme.bodyMedium?.copyWith(height: 1.4))],
         ),
         const SizedBox(height: 24),
-        if (existing != null && applied)
+        if (existing != null)
           Column(
             children: [
               Row(

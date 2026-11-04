@@ -30,6 +30,17 @@ void main() {
     });
   });
 
+  group('applicationFor', () {
+    test('vraća prijavu studenta na oglas, a povučenu preskače', () {
+      final withdrawn = application(status: ApplicationStatus.withdrawn);
+      final pending = application(status: ApplicationStatus.pending);
+      expect(applicationFor(student, job().id, [withdrawn]), isNull);
+      expect(applicationFor(student, job().id, [withdrawn, pending]), pending);
+      expect(applicationFor(otherStudent, job().id, [pending]), isNull);
+      expect(applicationFor(student, job(id: 'job-2').id, [pending]), isNull);
+    });
+  });
+
   group('canApply', () {
     test('prijava na otvoren oglas sa mestima prolazi', () {
       expect(canApply(job: job(), studentId: student, applications: const []).isSuccess, isTrue);
