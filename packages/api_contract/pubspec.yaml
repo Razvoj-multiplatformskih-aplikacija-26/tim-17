@@ -1,0 +1,11 @@
+name: api_contract
+description: Jobly HTTP ugovor između klijenata i servera, sa putanjama, kodovima grešaka i oblikom JSON-a.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.0
+resolution: workspace
+
+dev_dependencies:
+  test: 1.31.1

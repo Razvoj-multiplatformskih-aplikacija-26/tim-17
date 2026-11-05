@@ -278,7 +278,7 @@ class _KanbanCard extends StatelessWidget {
                     Icon(Icons.place_outlined, size: 14, color: scheme.onSurfaceVariant),
                     const SizedBox(width: 4),
                     Expanded(child: Text(item.posting.city, style: muted)),
-                    Text('${item.posting.hourlyRate.round()} RSD/h', style: theme.textTheme.labelMedium),
+                    Text('${item.posting.hourlyRate} RSD/h', style: theme.textTheme.labelMedium),
                   ],
                 ),
                 const SizedBox(height: 8),

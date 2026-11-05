@@ -8,6 +8,8 @@ import '../result.dart';
 final class MotivationLetter {
   const MotivationLetter._(this.text);
 
+  factory MotivationLetter.stored(String text) => MotivationLetter._(text.trim());
+
   static const minLength = 20;
   static const maxLength = 500;
 
@@ -18,8 +20,8 @@ final class MotivationLetter {
   static Result<MotivationLetter> parse(String input) {
     final text = input.trim();
     final length = text.characters.length;
-    if (length < minLength) return Failure(LetterTooShort(length));
-    if (length > maxLength) return Failure(LetterTooLong(length));
+    if (length < minLength) return Failure(LetterTooShort(length, min: minLength));
+    if (length > maxLength) return Failure(LetterTooLong(length, max: maxLength));
     return Success(MotivationLetter._(text));
   }
 

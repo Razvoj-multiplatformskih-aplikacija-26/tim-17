@@ -160,8 +160,8 @@ void main() {
     });
 
     test('dva ista korisnika su jednaka', () {
-      const a = User(id: student, role: UserRole.student, firstName: 'Ana', lastName: 'Ilić');
-      const b = User(id: student, role: UserRole.student, firstName: 'Ana', lastName: 'Ilić');
+      const a = User(id: student, username: 'ana', role: UserRole.student, firstName: 'Ana', lastName: 'Ilić');
+      const b = User(id: student, username: 'ana', role: UserRole.student, firstName: 'Ana', lastName: 'Ilić');
       expect(a, b);
     });
   });

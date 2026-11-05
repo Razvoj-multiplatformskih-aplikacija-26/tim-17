@@ -66,7 +66,7 @@ class _JobDetail extends StatelessWidget {
             InfoRow(icon: job.category.icon, label: 'Kategorija', value: job.category.label),
             InfoRow(icon: job.shift.icon, label: 'Smena', value: '${job.shift.label}, ${job.hoursPerShift} h'),
             InfoRow(icon: job.payType.icon, label: 'Isplata', value: job.payType.label),
-            InfoRow(icon: Icons.payments_outlined, label: 'Satnica', value: '${job.hourlyRate.round()} RSD/h'),
+            InfoRow(icon: Icons.payments_outlined, label: 'Satnica', value: '${job.hourlyRate} RSD/h'),
             InfoRow(icon: Icons.event_outlined, label: 'Početak', value: formatDateTime(job.startsAt)),
             InfoRow(icon: Icons.groups_outlined, label: 'Traženo radnika', value: '${job.requiredWorkers}'),
           ],
