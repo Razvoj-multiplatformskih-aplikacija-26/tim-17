@@ -5,13 +5,16 @@ void main() {
   String text(int length) => 'a' * length;
 
   test('prazno pismo vraća LetterTooShort(0)', () {
-    expect(MotivationLetter.parse('   '), const Failure<MotivationLetter>(LetterTooShort(0)));
+    expect(
+      MotivationLetter.parse('   '),
+      const Failure<MotivationLetter>(LetterTooShort(0, min: MotivationLetter.minLength)),
+    );
   });
 
   test('${MotivationLetter.minLength - 1} znakova je prekratko', () {
     expect(
       MotivationLetter.parse(text(MotivationLetter.minLength - 1)),
-      const Failure<MotivationLetter>(LetterTooShort(MotivationLetter.minLength - 1)),
+      const Failure<MotivationLetter>(LetterTooShort(MotivationLetter.minLength - 1, min: MotivationLetter.minLength)),
     );
   });
 
@@ -26,7 +29,7 @@ void main() {
   test('${MotivationLetter.maxLength + 1} znakova je predugačko', () {
     expect(
       MotivationLetter.parse(text(MotivationLetter.maxLength + 1)),
-      const Failure<MotivationLetter>(LetterTooLong(MotivationLetter.maxLength + 1)),
+      const Failure<MotivationLetter>(LetterTooLong(MotivationLetter.maxLength + 1, max: MotivationLetter.maxLength)),
     );
   });
 

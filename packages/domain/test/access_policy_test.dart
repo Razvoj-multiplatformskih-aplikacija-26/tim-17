@@ -4,10 +4,28 @@ import 'package:test/test.dart';
 import 'fixtures.dart';
 
 void main() {
-  const me = User(id: student, role: UserRole.student, firstName: 'Ana', lastName: 'Ilić');
-  const someoneElse = User(id: otherStudent, role: UserRole.student, firstName: 'Marko', lastName: 'Jović');
-  const referent = User(id: UserId('u-ref'), role: UserRole.staff, firstName: 'Marija', lastName: 'Kostić');
-  const employer = User(id: UserId('u-emp'), role: UserRole.employer, firstName: 'Petar', lastName: 'Lukić');
+  const me = User(id: student, username: 'ana', role: UserRole.student, firstName: 'Ana', lastName: 'Ilić');
+  const someoneElse = User(
+    id: otherStudent,
+    username: 'marko',
+    role: UserRole.student,
+    firstName: 'Marko',
+    lastName: 'Jović',
+  );
+  const referent = User(
+    id: UserId('u-ref'),
+    username: 'marija',
+    role: UserRole.staff,
+    firstName: 'Marija',
+    lastName: 'Kostić',
+  );
+  const employer = User(
+    id: UserId('u-emp'),
+    username: 'petar',
+    role: UserRole.employer,
+    firstName: 'Petar',
+    lastName: 'Lukić',
+  );
 
   test('osoblje su referent i poslodavac, a student nije', () {
     expect(UserRole.staff.isStaff, isTrue);

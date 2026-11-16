@@ -1,10 +1,28 @@
 import 'package:domain/domain.dart';
 import 'package:use_cases/use_cases.dart';
 
-const student = User(id: UserId('u-student'), role: UserRole.student, firstName: 'Ana', lastName: 'Ilić');
-const otherStudent = User(id: UserId('u-other'), role: UserRole.student, firstName: 'Marko', lastName: 'Jović');
+const student = User(
+  id: UserId('u-student'),
+  username: 'ana',
+  role: UserRole.student,
+  firstName: 'Ana',
+  lastName: 'Ilić',
+);
+const otherStudent = User(
+  id: UserId('u-other'),
+  username: 'marko',
+  role: UserRole.student,
+  firstName: 'Marko',
+  lastName: 'Jović',
+);
 const other = otherStudent;
-const referent = User(id: UserId('u-ref'), role: UserRole.staff, firstName: 'Marija', lastName: 'Kostić');
+const referent = User(
+  id: UserId('u-ref'),
+  username: 'marija',
+  role: UserRole.staff,
+  firstName: 'Marija',
+  lastName: 'Kostić',
+);
 
 final now = DateTime.utc(2026, 11, 1, 10);
 
@@ -12,7 +30,7 @@ JobPosting job(
   String id, {
   int workers = 2,
   JobStatus status = JobStatus.open,
-  double rate = 400,
+  int rate = 400,
   String city = 'Beograd',
   int postedDay = 1,
 }) => JobPosting(

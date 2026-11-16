@@ -7,7 +7,7 @@ JobPosting _job(
   WorkShift shift = WorkShift.morning,
   PayType payType = PayType.hourly,
   JobCategory category = JobCategory.retail,
-  double rate = 400,
+  int rate = 400,
   int hours = 8,
   int postedDay = 1,
   int startDay = 10,

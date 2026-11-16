@@ -4,7 +4,13 @@ import 'package:use_cases/use_cases.dart';
 import 'data/fake_job_board.dart';
 import 'data/seed.dart';
 
-const currentStudent = User(id: currentStudentId, role: UserRole.student, firstName: 'Nikola', lastName: 'Petrović');
+const currentStudent = User(
+  id: currentStudentId,
+  username: 'student1',
+  role: UserRole.student,
+  firstName: 'Nikola',
+  lastName: 'Petrović',
+);
 
 final class AppDependencies {
   AppDependencies({

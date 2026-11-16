@@ -3,7 +3,13 @@ import 'package:use_cases/use_cases.dart';
 
 import 'data/fake_applications_board.dart';
 
-const staffReferent = User(id: UserId('u-referent'), role: UserRole.staff, firstName: 'Nikola', lastName: 'Vasiljević');
+const staffReferent = User(
+  id: UserId('u-referent'),
+  username: 'referent1',
+  role: UserRole.staff,
+  firstName: 'Nikola',
+  lastName: 'Vasiljević',
+);
 
 final class BackofficeDependencies {
   BackofficeDependencies({

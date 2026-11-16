@@ -193,7 +193,7 @@ class _TableRow extends StatelessWidget {
                     Text(item.posting.city, style: muted),
                   ],
                 ),
-                pay: Text('${item.posting.hourlyRate.round()} RSD/h', style: theme.textTheme.bodyMedium),
+                pay: Text('${item.posting.hourlyRate} RSD/h', style: theme.textTheme.bodyMedium),
                 date: Text(
                   formatDateTime(item.application.appliedAt),
                   style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),

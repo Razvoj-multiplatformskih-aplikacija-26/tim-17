@@ -8,34 +8,36 @@ sealed class DomainError {
 
 @immutable
 final class LetterTooShort extends DomainError {
-  const LetterTooShort(this.length);
+  const LetterTooShort(this.length, {required this.min});
 
   final int length;
+  final int min;
 
   @override
-  bool operator ==(Object other) => other is LetterTooShort && other.length == length;
+  bool operator ==(Object other) => other is LetterTooShort && other.length == length && other.min == min;
 
   @override
-  int get hashCode => Object.hash(LetterTooShort, length);
+  int get hashCode => Object.hash(LetterTooShort, length, min);
 
   @override
-  String toString() => 'LetterTooShort($length)';
+  String toString() => 'LetterTooShort($length, min $min)';
 }
 
 @immutable
 final class LetterTooLong extends DomainError {
-  const LetterTooLong(this.length);
+  const LetterTooLong(this.length, {required this.max});
 
   final int length;
+  final int max;
 
   @override
-  bool operator ==(Object other) => other is LetterTooLong && other.length == length;
+  bool operator ==(Object other) => other is LetterTooLong && other.length == length && other.max == max;
 
   @override
-  int get hashCode => Object.hash(LetterTooLong, length);
+  int get hashCode => Object.hash(LetterTooLong, length, max);
 
   @override
-  String toString() => 'LetterTooLong($length)';
+  String toString() => 'LetterTooLong($length, max $max)';
 }
 
 final class JobClosed extends DomainError {

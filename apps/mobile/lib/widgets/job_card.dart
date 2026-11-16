@@ -16,7 +16,7 @@ class JobCard extends StatelessWidget {
     final muted = theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant);
     return Semantics(
       button: true,
-      label: '${job.title}, ${job.employerName}, ${job.city}, ${job.hourlyRate.round()} dinara po satu',
+      label: '${job.title}, ${job.employerName}, ${job.city}, ${job.hourlyRate} dinara po satu',
       child: ExcludeSemantics(
         child: Card(
           clipBehavior: Clip.antiAlias,
@@ -33,7 +33,7 @@ class JobCard extends StatelessWidget {
                       Expanded(child: Text(job.title, style: theme.textTheme.titleMedium)),
                       const SizedBox(width: 12),
                       Text(
-                        '${job.hourlyRate.round()} RSD/h',
+                        '${job.hourlyRate} RSD/h',
                         style: theme.textTheme.titleSmall?.copyWith(color: theme.colorScheme.primary),
                       ),
                     ],

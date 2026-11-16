@@ -53,7 +53,7 @@ List<JobPosting> seedJobs(DateTime now) {
     JobCategory category,
     WorkShift shift,
     PayType payType,
-    double rate,
+    int rate,
     int workers, {
     required int startsInDays,
     required int postedDaysAgo,

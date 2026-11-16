@@ -132,7 +132,7 @@ class _ApplicationDetail extends StatelessWidget {
           children: [
             InfoRow(icon: Icons.send_outlined, label: 'Poslato', value: formatDateTime(record.application.appliedAt)),
             InfoRow(icon: Icons.event_outlined, label: 'Početak rada', value: formatDateTime(job.startsAt)),
-            InfoRow(icon: Icons.payments_outlined, label: 'Satnica', value: '${job.hourlyRate.round()} RSD/h'),
+            InfoRow(icon: Icons.payments_outlined, label: 'Satnica', value: '${job.hourlyRate} RSD/h'),
           ],
         ),
         if (letter != null) ...[

@@ -84,7 +84,7 @@ class DetailPanel extends StatelessWidget {
                     _InfoRow(
                       icon: Icons.payments_outlined,
                       label: 'Satnica',
-                      value: '${item.posting.hourlyRate.round()} RSD/h',
+                      value: '${item.posting.hourlyRate} RSD/h',
                     ),
                     _InfoRow(
                       icon: Icons.groups_outlined,

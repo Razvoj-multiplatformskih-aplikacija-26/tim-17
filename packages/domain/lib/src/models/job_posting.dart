@@ -39,7 +39,7 @@ final class JobPosting {
   final JobCategory category;
   final WorkShift shift;
   final PayType payType;
-  final double hourlyRate;
+  final int hourlyRate;
   final int requiredWorkers;
   final DateTime startsAt;
   final DateTime postedAt;
@@ -48,7 +48,7 @@ final class JobPosting {
 
   bool get isOpen => status == JobStatus.open;
 
-  double get dailyPay => hourlyRate * hoursPerShift;
+  int get dailyPay => hourlyRate * hoursPerShift;
 
   JobPosting copyWith({JobStatus? status, int? requiredWorkers}) {
     return JobPosting(
