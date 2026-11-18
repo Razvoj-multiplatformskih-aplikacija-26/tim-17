@@ -44,12 +44,16 @@ final class ChangeApplicationStatus {
         case Failure(:final error):
           errors[id] = error;
         case Success(:final value):
-          working[index] = value;
-          changed.add(value);
+          switch (await applications.saveApplication(value, from: application.status)) {
+            case Failure(:final error):
+              errors[id] = error;
+            case Success(:final value):
+              working[index] = value;
+              changed.add(value);
+          }
       }
     }
     if (changed.isEmpty) return StatusChangeOutcome(changed: const [], errors: errors);
-    final saved = await applications.saveApplications(changed);
-    return StatusChangeOutcome(changed: await records.of(saved), errors: errors);
+    return StatusChangeOutcome(changed: await records.of(changed), errors: errors);
   }
 }

@@ -46,14 +46,17 @@ void main() {
     });
 
     test('repozitorijum samo čuva, pravila ne proverava', () async {
-      final created = await board.createApplication(
+      final created = (await board.createApplication(
         jobId: const JobPostingId('job-1'),
         studentId: currentStudentId,
         letter: letter(),
         appliedAt: clock.now(),
-      );
+      )).valueOrNull!;
       expect(await board.findApplication(created.id), created);
-      await board.saveApplications([created.copyWith(status: ApplicationStatus.withdrawn)]);
+      await board.saveApplication(
+        created.copyWith(status: ApplicationStatus.withdrawn),
+        from: ApplicationStatus.pending,
+      );
       expect((await board.findApplication(created.id))?.status, ApplicationStatus.withdrawn);
     });
   });

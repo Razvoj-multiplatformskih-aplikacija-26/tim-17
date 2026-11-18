@@ -1,0 +1,65 @@
+name: jobly
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-jobly}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Copy .env.example to .env first}
+      POSTGRES_DB: ${POSTGRES_DB:-jobly}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5436}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  migrate:
+    image: ghcr.io/amacneil/dbmate:2.37.0
+    command: ["--wait", "--no-dump-schema", "up"]
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-jobly}:${POSTGRES_PASSWORD:?Copy .env.example to .env first}@db:5432/${POSTGRES_DB:-jobly}?sslmode=disable
+      DBMATE_MIGRATIONS_DIR: /migrations
+    volumes:
+      - ./apps/server/migrations:/migrations:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  server:
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-jobly}:${POSTGRES_PASSWORD:?Copy .env.example to .env first}@db:5432/${POSTGRES_DB:-jobly}?sslmode=disable
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8081}
+      SESSION_TTL_MINUTES: ${SESSION_TTL_MINUTES:-480}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      DEMO_PASSWORD: ${DEMO_PASSWORD:?Copy .env.example to .env first}
+      JWT_SECRET: ${JWT_SECRET:?Copy .env.example to .env first}
+      NOTIFICATIONS_API_KEY: ${NOTIFICATIONS_API_KEY:-}
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  adminer:
+    image: adminer:5
+    profiles: [tools]
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-jobly}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Copy .env.example to .env first}
+      POSTGRES_DB: ${POSTGRES_DB:-jobly}
+    volumes:
+      - ./apps/server/tool/adminer_login.php:/var/www/html/plugins-enabled/login.php:ro
+    ports:
+      - "127.0.0.1:${ADMINER_PORT:-8082}:8080"
+    depends_on:
+      - db
+
+volumes:
+  db-data:

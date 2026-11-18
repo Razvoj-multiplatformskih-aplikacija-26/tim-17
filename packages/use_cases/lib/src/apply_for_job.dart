@@ -34,6 +34,9 @@ final class ApplyForJob {
       letter: letter,
       appliedAt: clock.now(),
     );
-    return Success(await records.one(created));
+    return switch (created) {
+      Failure(:final error) => Failure(error),
+      Success(:final value) => Success(await records.one(value)),
+    };
   }
 }
