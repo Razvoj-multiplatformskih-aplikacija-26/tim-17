@@ -18,8 +18,10 @@ final class WithdrawApplication {
       case Failure(:final error):
         return Failure(error);
       case Success(:final value):
-        final saved = await applications.saveApplications([value]);
-        return Success(await records.one(saved.single));
+        return switch (await applications.saveApplication(value, from: application.status)) {
+          Failure(:final error) => Failure(error),
+          Success(:final value) => Success(await records.one(value)),
+        };
     }
   }
 }

@@ -9,12 +9,12 @@ abstract interface class ApplicationRepository {
 
   Future<JobApplication?> findApplication(JobApplicationId id);
 
-  Future<JobApplication> createApplication({
+  Future<Result<JobApplication>> createApplication({
     required JobPostingId jobId,
     required UserId studentId,
     required MotivationLetter letter,
     required DateTime appliedAt,
   });
 
-  Future<List<JobApplication>> saveApplications(List<JobApplication> applications);
+  Future<Result<JobApplication>> saveApplication(JobApplication application, {required ApplicationStatus from});
 }

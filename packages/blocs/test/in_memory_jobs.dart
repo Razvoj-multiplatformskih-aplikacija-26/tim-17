@@ -75,6 +75,7 @@ final class InMemoryJobBoard implements JobPostingRepository, ApplicationReposit
   final List<JobApplication> applications;
   int failingRequests = 0;
   int saves = 0;
+  DomainError? rejectNextCreate;
 
   Future<void> _roundTrip() async {
     if (failingRequests > 0) {
@@ -126,13 +127,17 @@ final class InMemoryJobBoard implements JobPostingRepository, ApplicationReposit
   }
 
   @override
-  Future<JobApplication> createApplication({
+  Future<Result<JobApplication>> createApplication({
     required JobPostingId jobId,
     required UserId studentId,
     required MotivationLetter letter,
     required DateTime appliedAt,
   }) async {
     await _roundTrip();
+    if (rejectNextCreate case final error?) {
+      rejectNextCreate = null;
+      return Failure(error);
+    }
     final created = JobApplication(
       id: JobApplicationId('new-${applications.length + 1}'),
       jobId: jobId,
@@ -142,17 +147,19 @@ final class InMemoryJobBoard implements JobPostingRepository, ApplicationReposit
       letter: letter,
     );
     applications.add(created);
-    return created;
+    return Success(created);
   }
 
   @override
-  Future<List<JobApplication>> saveApplications(List<JobApplication> changed) async {
+  Future<Result<JobApplication>> saveApplication(JobApplication application, {required ApplicationStatus from}) async {
     await _roundTrip();
+    final index = applications.indexWhere((a) => a.id == application.id);
+    if (index < 0) return const Failure(NotFound());
+    final current = applications[index].status;
+    if (current != from) return Failure(InvalidTransition(from: current, to: application.status));
     saves++;
-    for (final a in changed) {
-      applications[applications.indexWhere((x) => x.id == a.id)] = a;
-    }
-    return changed;
+    applications[index] = application;
+    return Success(application);
   }
 
   @override

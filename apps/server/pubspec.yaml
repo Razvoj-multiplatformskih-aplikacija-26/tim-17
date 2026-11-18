@@ -1,0 +1,27 @@
+name: server
+description: Jobly HTTP server na Relic-u i PostgreSQL-u, sa istim domenskim pravilima kao klijenti.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.0
+resolution: workspace
+
+dependencies:
+  api_contract:
+    path: ../../packages/api_contract
+  api_mapping:
+    path: ../../packages/api_mapping
+  dart_jsonwebtoken: 3.4.1
+  domain:
+    path: ../../packages/domain
+  hashlib: 2.4.2
+  pool: 1.5.3
+  postgres: 3.5.18
+  relic: 1.2.0
+  use_cases:
+    path: ../../packages/use_cases
+
+dev_dependencies:
+  http: 1.6.0
+  test: 1.31.1

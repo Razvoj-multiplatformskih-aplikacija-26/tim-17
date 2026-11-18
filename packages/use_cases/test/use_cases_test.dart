@@ -46,6 +46,14 @@ void main() {
       expect(board.applications.length, 3);
     });
 
+    test('odbijen upis u repozitorijumu stiže kao domenska greška', () async {
+      board.applications.removeWhere((a) => a.id == const JobApplicationId('a1'));
+      board.rejectNextCreate = const AlreadyApplied();
+      final result = await apply()(jobId: const JobPostingId('j1'), by: student, letter: letter());
+      expect(result, const Failure<ApplicationRecord>(AlreadyApplied()));
+      expect(board.applications.length, 2);
+    });
+
     test('osoblje ne šalje prijave', () async {
       final result = await apply()(jobId: const JobPostingId('j1'), by: referent, letter: letter());
       expect(result, const Failure<ApplicationRecord>(NotAllowed()));
@@ -90,6 +98,18 @@ void main() {
       expect(board.saves, 0);
     });
 
+    test('zastareo status pri upisu vraća trenutno stanje', () async {
+      board.beforeNextSave = () =>
+          board.applications[0] = board.applications[0].copyWith(status: ApplicationStatus.rejected);
+      expect(
+        await withdraw()(id: const JobApplicationId('a1'), by: student),
+        const Failure<ApplicationRecord>(
+          InvalidTransition(from: ApplicationStatus.rejected, to: ApplicationStatus.withdrawn),
+        ),
+      );
+      expect(board.saves, 0);
+    });
+
     test('završena prijava ne može da se povuče', () async {
       board.applications.add(application('a5', 'closed', status: ApplicationStatus.completed));
       expect(
@@ -117,7 +137,7 @@ void main() {
     ChangeApplicationStatus change() =>
         ChangeApplicationStatus(jobs: board, applications: board, records: recordsOf(board));
 
-    test('masovna promena čuva dozvoljene i vraća razlog za ostale, u jednom upisu', () async {
+    test('masovna promena čuva dozvoljene i vraća razlog za ostale', () async {
       final outcome = await change()(
         ids: {const JobApplicationId('a1'), const JobApplicationId('a3'), const JobApplicationId('nema')},
         to: ApplicationStatus.rejected,
@@ -146,6 +166,20 @@ void main() {
       );
       expect([for (final r in outcome.changed) r.id.value], ['b1']);
       expect(outcome.errors, {const JobApplicationId('b2'): const NoSlotsLeft()});
+    });
+
+    test('zakasneli referent dobija razlog po prijavi', () async {
+      board.beforeNextSave = () =>
+          board.applications[0] = board.applications[0].copyWith(status: ApplicationStatus.accepted);
+      final outcome = await change()(ids: {const JobApplicationId('a1')}, to: ApplicationStatus.rejected, by: referent);
+      expect(outcome.changed, isEmpty);
+      expect(outcome.errors, {
+        const JobApplicationId('a1'): const InvalidTransition(
+          from: ApplicationStatus.accepted,
+          to: ApplicationStatus.rejected,
+        ),
+      });
+      expect(board.applications[0].status, ApplicationStatus.accepted);
     });
 
     test('student ne menja statuse preko table', () async {

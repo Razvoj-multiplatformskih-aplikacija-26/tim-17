@@ -78,7 +78,7 @@ final class FakeJobBoard implements JobPostingRepository, ApplicationRepository,
   }
 
   @override
-  Future<JobApplication> createApplication({
+  Future<Result<JobApplication>> createApplication({
     required JobPostingId jobId,
     required UserId studentId,
     required MotivationLetter letter,
@@ -94,17 +94,18 @@ final class FakeJobBoard implements JobPostingRepository, ApplicationRepository,
       letter: letter,
     );
     _applications.add(created);
-    return created;
+    return Success(created);
   }
 
   @override
-  Future<List<JobApplication>> saveApplications(List<JobApplication> applications) async {
+  Future<Result<JobApplication>> saveApplication(JobApplication application, {required ApplicationStatus from}) async {
     await _roundTrip();
-    for (final application in applications) {
-      final index = _applications.indexWhere((a) => a.id == application.id);
-      if (index >= 0) _applications[index] = application;
-    }
-    return applications;
+    final index = _applications.indexWhere((a) => a.id == application.id);
+    if (index < 0) return const Failure(NotFound());
+    final current = _applications[index].status;
+    if (current != from) return Failure(InvalidTransition(from: current, to: application.status));
+    _applications[index] = application;
+    return Success(application);
   }
 
   @override

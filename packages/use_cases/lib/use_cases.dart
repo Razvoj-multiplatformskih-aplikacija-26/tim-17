@@ -8,5 +8,7 @@ export 'src/get_my_applications.dart';
 export 'src/ports/application_repository.dart';
 export 'src/ports/candidate_repository.dart';
 export 'src/ports/job_posting_repository.dart';
+export 'src/ports/session_repository.dart';
 export 'src/repository_exception.dart';
+export 'src/sessions.dart';
 export 'src/withdraw_application.dart';
