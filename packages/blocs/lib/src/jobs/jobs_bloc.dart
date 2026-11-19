@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:domain/domain.dart';
 import 'package:equatable/equatable.dart';
@@ -7,7 +9,19 @@ part 'jobs_event.dart';
 part 'jobs_state.dart';
 
 class JobsBloc extends Bloc<JobsEvent, JobsState> {
-  JobsBloc({required this.getJobs, required this.applyForJob, required this.student}) : super(const JobsLoading()) {
+  JobsBloc({required this.getJobs, required this.applyForJob, this._student}) : super(const JobsLoading()) {
+    on<JobsStudentChanged>((event, emit) async {
+      _student = event.student;
+      emit(JobsLoading(filters: state.filters));
+      await _load(emit);
+    });
+    on<JobsRefreshed>((event, emit) async {
+      try {
+        await _load(emit);
+      } finally {
+        event._handled.complete();
+      }
+    });
     on<JobsRequested>((event, emit) async {
       emit(JobsLoading(filters: state.filters));
       await _load(emit);
@@ -39,20 +53,31 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
 
   final GetJobs getJobs;
   final ApplyForJob applyForJob;
-  final User student;
+  User? _student;
+
+  User? get student => _student;
 
   Future<void> _load(Emitter<JobsState> emit) async {
-    final filters = state.filters;
+    final student = _student;
+    if (student == null) return;
     try {
-      emit(_ready(await getJobs(), filters));
+      final jobs = await getJobs();
+      if (student != _student) return;
+      final current = state;
+      emit(
+        current is JobsReady
+            ? _ready(jobs, current.filters, applyingJobId: current.applyingJobId, notice: current.notice)
+            : _ready(jobs, current.filters),
+      );
     } on Exception catch (cause) {
-      emit(JobsFailure(cause, filters: filters));
+      if (student == _student) emit(JobsFailure(cause, filters: state.filters));
     }
   }
 
   Future<void> _onApplyRequested(ApplyRequested event, Emitter<JobsState> emit) async {
     final current = state;
-    if (current is! JobsReady || current.applyingJobId != null) return;
+    final student = _student;
+    if (current is! JobsReady || current.applyingJobId != null || student == null) return;
     emit(_ready(current.jobs, current.filters, applyingJobId: event.jobId));
     final Result<ApplicationRecord> result;
     try {
@@ -61,16 +86,22 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
       emit(_ready(current.jobs, current.filters, notice: ApplicationFailed(event.jobId, cause)));
       return;
     }
-    emit(
-      _ready(
-        current.jobs,
-        current.filters,
-        notice: switch (result) {
-          Success(:final value) => ApplicationSubmitted(value),
-          Failure(:final error) => ApplicationRejected(event.jobId, error),
-        },
-      ),
-    );
+    switch (result) {
+      case Success(:final value):
+        emit(_ready(current.jobs, current.filters, notice: ApplicationSubmitted(value)));
+      case Failure(:final error):
+        emit(
+          _ready(await _freshJobsOr(current.jobs), current.filters, notice: ApplicationRejected(event.jobId, error)),
+        );
+    }
+  }
+
+  Future<List<JobPosting>> _freshJobsOr(List<JobPosting> fallback) async {
+    try {
+      return await getJobs();
+    } on Exception {
+      return fallback;
+    }
   }
 
   JobsReady _ready(List<JobPosting> jobs, JobFilters filters, {JobPostingId? applyingJobId, JobsNotice? notice}) {

@@ -40,7 +40,7 @@ class _ApplyScreenState extends State<ApplyScreen> {
     context.read<JobsBloc>().add(const JobsNoticeAcknowledged());
     switch (notice) {
       case ApplicationSubmitted(:final record):
-        context.read<MyApplicationsBloc>().add(const MyApplicationsRefreshed());
+        context.read<MyApplicationsBloc>().add(MyApplicationsRefreshed());
         messenger.showSnackBar(const SnackBar(content: Text('Prijava je poslata.')));
         context.go('/applications/${record.id.value}', extra: true);
       case ApplicationRejected(:final error):

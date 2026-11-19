@@ -37,3 +37,23 @@ final class ApplyRequested extends JobsEvent {
 final class JobsNoticeAcknowledged extends JobsEvent {
   const JobsNoticeAcknowledged();
 }
+
+final class JobsStudentChanged extends JobsEvent {
+  const JobsStudentChanged(this.student);
+
+  final User? student;
+
+  @override
+  List<Object?> get props => [student];
+}
+
+final class JobsRefreshed extends JobsEvent {
+  JobsRefreshed();
+
+  final _handled = Completer<void>();
+
+  Future<void> get handled => _handled.future;
+
+  @override
+  List<Object?> get props => [_handled];
+}

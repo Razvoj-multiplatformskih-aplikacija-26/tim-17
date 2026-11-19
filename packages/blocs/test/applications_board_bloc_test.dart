@@ -190,4 +190,19 @@ void main() {
       isA<BoardLoaded>().having((s) => s.filters.status, 'status', accepted),
     ],
   );
+
+  test('odbijena promena statusa ponovo učitava tablu', () async {
+    final jobs = seeded();
+    final bloc = build(jobs);
+    await loaded(bloc);
+    jobs.replaceApplication(application('a1', 'j1', status: ApplicationStatus.withdrawn));
+    bloc.add(StatusChangeRequested.single(const JobApplicationId('a1'), accepted));
+    final state = await bloc.stream.firstWhere((s) => s is BoardLoaded && !s.isBusy && s.notice != null) as BoardLoaded;
+    expect(
+      state.notice,
+      const StatusChangeRejected(accepted, InvalidTransition(from: ApplicationStatus.withdrawn, to: accepted)),
+    );
+    expect(statusOf(state, 'a1'), ApplicationStatus.withdrawn);
+    await bloc.close();
+  });
 }
