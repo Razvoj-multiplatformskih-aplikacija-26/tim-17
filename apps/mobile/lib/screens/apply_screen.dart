@@ -45,10 +45,8 @@ class _ApplyScreenState extends State<ApplyScreen> {
         context.go('/applications/${record.id.value}', extra: true);
       case ApplicationRejected(:final error):
         messenger.showSnackBar(SnackBar(content: Text(error.message)));
-      case ApplicationFailed():
-        messenger.showSnackBar(
-          const SnackBar(content: Text('Prijava nije poslata. Proveri internet vezu i pokušaj ponovo.')),
-        );
+      case ApplicationFailed(:final cause):
+        messenger.showSnackBar(SnackBar(content: Text('Prijava nije poslata. ${actionFailureMessage(cause)}')));
     }
   }
 

@@ -15,3 +15,8 @@ String failureMessage(Object? cause) => switch (cause) {
   final DomainError error => error.message,
   _ => unavailableMessage,
 };
+
+String actionFailureMessage(Object? cause) => switch (cause) {
+  RepositoryException(failure: RepositoryFailure.unavailable) || null => 'Proveri internet vezu i pokušaj ponovo.',
+  _ => failureMessage(cause),
+};

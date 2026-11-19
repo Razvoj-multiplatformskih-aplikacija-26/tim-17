@@ -189,7 +189,7 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
       StatusChangeSkipped(:final count) =>
         'Ova promena nije moguća za ${count == 1 ? 'izabranu prijavu' : 'izabrane prijave'}.',
       StatusChangeRejected(:final error) => error.message,
-      StatusChangeFailed() => 'Promena nije sačuvana. Proveri internet vezu i pokušaj ponovo.',
+      StatusChangeFailed(:final cause) => 'Promena nije sačuvana. ${actionFailureMessage(cause)}',
     };
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()

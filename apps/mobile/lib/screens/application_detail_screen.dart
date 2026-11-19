@@ -21,7 +21,7 @@ class ApplicationDetailScreen extends StatelessWidget {
         content: Text(switch (notice) {
           ApplicationWithdrawn() => 'Prijava je povučena.',
           WithdrawRejected(:final error) => error.message,
-          WithdrawFailed() => 'Prijava nije povučena. Proveri internet vezu i pokušaj ponovo.',
+          WithdrawFailed(:final cause) => 'Prijava nije povučena. ${actionFailureMessage(cause)}',
         }),
       ),
     );
