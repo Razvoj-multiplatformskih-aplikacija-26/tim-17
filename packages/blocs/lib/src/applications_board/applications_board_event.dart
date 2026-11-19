@@ -15,6 +15,10 @@ final class BoardRetried extends ApplicationsBoardEvent {
   const BoardRetried();
 }
 
+final class BoardRefreshed extends ApplicationsBoardEvent {
+  const BoardRefreshed();
+}
+
 final class StatusChangeRequested extends ApplicationsBoardEvent {
   const StatusChangeRequested(this.ids, this.to);
 

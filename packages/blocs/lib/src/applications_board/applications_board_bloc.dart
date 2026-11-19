@@ -17,6 +17,7 @@ final class ApplicationsBoardBloc extends Bloc<ApplicationsBoardEvent, Applicati
       emit(const BoardLoading());
       await _load(emit);
     });
+    on<BoardRefreshed>((event, emit) => _load(emit));
     on<StatusChangeRequested>(_onStatusChangeRequested);
     on<BoardFiltersChanged>((event, emit) {
       _filters = event.filters;

@@ -205,4 +205,17 @@ void main() {
     expect(statusOf(state, 'a1'), ApplicationStatus.withdrawn);
     await bloc.close();
   });
+
+  blocTest<ApplicationsBoardBloc, ApplicationsBoardState>(
+    'osvežavanje donosi promene drugih korisnika bez stanja učitavanja',
+    build: () => build(seeded()),
+    act: (bloc) async {
+      await loaded(bloc);
+      final jobs = bloc.getAllApplications.applications as InMemoryJobBoard;
+      jobs.replaceApplication(application('a1', 'j1', status: ApplicationStatus.withdrawn));
+      bloc.add(const BoardRefreshed());
+    },
+    skip: 2,
+    expect: () => [isA<BoardLoaded>().having((s) => statusOf(s, 'a1'), 'a1', ApplicationStatus.withdrawn)],
+  );
 }
