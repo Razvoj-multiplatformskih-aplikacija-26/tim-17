@@ -327,7 +327,7 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
 
           final content = switch (state) {
             BoardLoading() => const LoadingView(),
-            BoardFailure() => FailureView(onRetry: () => _bloc.add(const BoardRetried())),
+            BoardFailure(:final cause) => FailureView(cause: cause, onRetry: () => _bloc.add(const BoardRetried())),
             BoardEmpty() => const EmptyView(
               icon: Icons.inbox_outlined,
               title: 'Još nema prijava',

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../jobly_colors.dart';
+import '../text/failures.dart';
 import 'gradient_button.dart';
 import 'jobly_wordmark.dart';
 
@@ -32,16 +33,17 @@ class EmptyView extends StatelessWidget {
 }
 
 class FailureView extends StatelessWidget {
-  const FailureView({super.key, required this.onRetry, this.title = 'Podaci trenutno nisu dostupni.'});
+  const FailureView({super.key, required this.onRetry, this.cause, this.title});
 
   final VoidCallback onRetry;
-  final String title;
+  final Object? cause;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
     return _StateView(
       icon: Icons.wifi_off_rounded,
-      title: title,
+      title: title ?? failureMessage(cause),
       message: 'Proveri internet vezu i pokušaj ponovo.',
       liveRegion: true,
       action: GradientButton(onPressed: onRetry, icon: Icons.refresh_rounded, label: 'Pokušaj ponovo'),
