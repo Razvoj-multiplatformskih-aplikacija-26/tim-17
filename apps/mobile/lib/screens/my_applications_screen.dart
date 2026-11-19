@@ -11,42 +11,51 @@ import '../widgets/top_bar.dart';
 class MyApplicationsScreen extends StatelessWidget {
   const MyApplicationsScreen({super.key});
 
+  Future<void> _refresh(MyApplicationsBloc bloc) {
+    final refresh = MyApplicationsRefreshed();
+    bloc.add(refresh);
+    return refresh.handled;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<MyApplicationsBloc, MyApplicationsState>(
-        builder: (context, state) {
-          final filter = state is MyApplicationsLoaded ? state.filter : null;
-          return CustomScrollView(
-            slivers: [
-              const JoblyTopBar(),
-              const SliverToBoxAdapter(
-                child: LargeTitle(title: 'Moje prijave', subtitle: 'Prati gde si se prijavio'),
-              ),
-              const SliverToBoxAdapter(child: SizedBox(height: 8)),
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: PinnedFrostedBar(
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    itemCount: ApplicationStatus.values.length + 1,
-                    separatorBuilder: (context, index) => const SizedBox(width: 8),
-                    itemBuilder: (context, index) {
-                      final status = index == 0 ? null : ApplicationStatus.values[index - 1];
-                      return JoblyChip(
-                        label: status?.groupLabel ?? 'Sve',
-                        selected: status == filter,
-                        onTap: () => context.read<MyApplicationsBloc>().add(MyApplicationsFilterChanged(status)),
-                      );
-                    },
+      body: RefreshIndicator(
+        onRefresh: () => _refresh(context.read<MyApplicationsBloc>()),
+        child: BlocBuilder<MyApplicationsBloc, MyApplicationsState>(
+          builder: (context, state) {
+            final filter = state is MyApplicationsLoaded ? state.filter : null;
+            return CustomScrollView(
+              slivers: [
+                const JoblyTopBar(),
+                const SliverToBoxAdapter(
+                  child: LargeTitle(title: 'Moje prijave', subtitle: 'Prati gde si se prijavio'),
+                ),
+                const SliverToBoxAdapter(child: SizedBox(height: 8)),
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: PinnedFrostedBar(
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      itemCount: ApplicationStatus.values.length + 1,
+                      separatorBuilder: (context, index) => const SizedBox(width: 8),
+                      itemBuilder: (context, index) {
+                        final status = index == 0 ? null : ApplicationStatus.values[index - 1];
+                        return JoblyChip(
+                          label: status?.groupLabel ?? 'Sve',
+                          selected: status == filter,
+                          onTap: () => context.read<MyApplicationsBloc>().add(MyApplicationsFilterChanged(status)),
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
-              ..._body(context, state),
-            ],
-          );
-        },
+                ..._body(context, state),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -63,9 +72,14 @@ class MyApplicationsScreen extends StatelessWidget {
     switch (state) {
       case MyApplicationsLoading():
         return [fill(const LoadingView())];
-      case MyApplicationsFailure():
+      case MyApplicationsFailure(:final cause):
         return [
-          fill(FailureView(onRetry: () => context.read<MyApplicationsBloc>().add(const MyApplicationsRetried()))),
+          fill(
+            FailureView(
+              cause: cause,
+              onRetry: () => context.read<MyApplicationsBloc>().add(const MyApplicationsRetried()),
+            ),
+          ),
         ];
       case MyApplicationsEmpty():
         return [
