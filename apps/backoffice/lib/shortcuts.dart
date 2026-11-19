@@ -67,6 +67,10 @@ class ShowKanbanIntent extends Intent {
   const ShowKanbanIntent();
 }
 
+class RefreshIntent extends Intent {
+  const RefreshIntent();
+}
+
 class ShowShortcutsIntent extends Intent {
   const ShowShortcutsIntent();
 }
@@ -88,6 +92,7 @@ Map<ShortcutActivator, Intent> boardShortcuts() => {
   const CharacterActivator('/'): const FocusSearchIntent(),
   const SingleActivator(LogicalKeyboardKey.digit1): const ShowTableIntent(),
   const SingleActivator(LogicalKeyboardKey.digit2): const ShowKanbanIntent(),
+  const SingleActivator(LogicalKeyboardKey.keyR): const RefreshIntent(),
   const CharacterActivator('?'): const ShowShortcutsIntent(),
 };
 
@@ -110,5 +115,6 @@ List<ShortcutDescription> shortcutDescriptions() => [
   const ShortcutDescription(['Esc'], 'Poništi izbor / zatvori detalj'),
   ShortcutDescription([commandKeyLabel, 'F'], 'Pretraga (ili /)'),
   const ShortcutDescription(['1', '2'], 'Tabela / kanban'),
+  const ShortcutDescription(['R'], 'Osveži prijave sa servera'),
   const ShortcutDescription(['?'], 'Pregled prečica'),
 ];

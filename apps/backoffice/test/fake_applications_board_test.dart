@@ -47,11 +47,11 @@ void main() {
     Future<StatusChangeOutcome> change(Set<String> ids, ApplicationStatus to) => dependencies.changeApplicationStatus(
       ids: {for (final id in ids) JobApplicationId(id)},
       to: to,
-      by: dependencies.staff,
+      by: staffReferent,
     );
 
     test('osoblje vidi sve prijave sa oglasom i kandidatom', () async {
-      final records = (await dependencies.getAllApplications(dependencies.staff)).valueOrNull!;
+      final records = (await dependencies.getAllApplications(staffReferent)).valueOrNull!;
       expect(records.length, 35);
       expect(records.first.candidate.fullName, isNotEmpty);
     });

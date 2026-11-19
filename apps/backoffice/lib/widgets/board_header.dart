@@ -17,6 +17,8 @@ class BoardHeader extends StatelessWidget {
     required this.view,
     required this.onView,
     required this.onShortcuts,
+    required this.onRefresh,
+    required this.onLogOut,
     required this.compact,
     this.demo,
   });
@@ -29,6 +31,8 @@ class BoardHeader extends StatelessWidget {
   final BoardView view;
   final ValueChanged<BoardView> onView;
   final VoidCallback onShortcuts;
+  final VoidCallback onRefresh;
+  final VoidCallback onLogOut;
   final bool compact;
   final Widget? demo;
 
@@ -65,13 +69,27 @@ class BoardHeader extends StatelessWidget {
       icon: const Icon(Icons.keyboard_alt_outlined),
       onPressed: onShortcuts,
     );
+    final refreshButton = IconButton(
+      tooltip: 'Osveži (R)',
+      icon: const Icon(Icons.refresh_rounded),
+      onPressed: onRefresh,
+    );
     if (compact) {
       return Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(children: [const JoblyWordmark(size: 24), const Spacer(), ?demo, const ThemeToggleButton()]),
+            Row(
+              children: [
+                const JoblyWordmark(size: 24),
+                const Spacer(),
+                ?demo,
+                refreshButton,
+                const ThemeToggleButton(),
+                IconButton(tooltip: 'Odjavi se', icon: const Icon(Icons.logout_rounded), onPressed: onLogOut),
+              ],
+            ),
             const SizedBox(height: 12),
             title,
             const SizedBox(height: 16),
@@ -96,11 +114,14 @@ class BoardHeader extends StatelessWidget {
         children: [
           Expanded(child: title),
           const SizedBox(width: 16),
-          SizedBox(width: 300, child: searchField),
+          Flexible(
+            child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 300), child: searchField),
+          ),
           const SizedBox(width: 12),
           ViewSwitcher(value: view, onChanged: onView),
           const SizedBox(width: 4),
           shortcutsButton,
+          refreshButton,
           ?demo,
         ],
       ),

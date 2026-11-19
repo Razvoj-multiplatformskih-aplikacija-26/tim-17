@@ -241,6 +241,8 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
     if (cursor != null) WidgetsBinding.instance.addPostFrameCallback((_) => _reveal(cursor));
   }
 
+  void _refresh() => _bloc.add(const BoardRefreshed());
+
   void _showShortcuts() => showDialog<void>(context: context, builder: (context) => const ShortcutsDialog());
 
   Map<Type, Action<Intent>> _actions() {
@@ -261,6 +263,7 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
       FocusSearchIntent: guarded<FocusSearchIntent>(_focusSearch),
       ShowTableIntent: guarded<ShowTableIntent>(() => _setView(BoardView.table)),
       ShowKanbanIntent: guarded<ShowKanbanIntent>(() => _setView(BoardView.kanban)),
+      RefreshIntent: guarded<RefreshIntent>(_refresh),
       ShowShortcutsIntent: guarded<ShowShortcutsIntent>(_showShortcuts),
     };
   }
@@ -348,6 +351,8 @@ class _ApplicationsScreenState extends State<ApplicationsScreen> {
                 view: _view,
                 onView: _setView,
                 onShortcuts: _showShortcuts,
+                onRefresh: _refresh,
+                onLogOut: () => context.read<SessionBloc>().add(const SessionLogOutRequested()),
                 demo: const DemoMenu(),
                 compact: narrow,
               ),
