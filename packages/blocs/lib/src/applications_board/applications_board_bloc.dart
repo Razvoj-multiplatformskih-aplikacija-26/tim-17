@@ -17,6 +17,7 @@ final class ApplicationsBoardBloc extends Bloc<ApplicationsBoardEvent, Applicati
       emit(const BoardLoading());
       await _load(emit);
     });
+    on<BoardRefreshed>((event, emit) => _load(emit));
     on<StatusChangeRequested>(_onStatusChangeRequested);
     on<BoardFiltersChanged>((event, emit) {
       _filters = event.filters;
@@ -72,10 +73,14 @@ final class ApplicationsBoardBloc extends Bloc<ApplicationsBoardEvent, Applicati
       return;
     }
     final changed = outcome.changed;
+    final byId = {for (final record in changed) record.id: record};
+    final merged = [for (final record in current.records) byId[record.id] ?? record];
+    final records = outcome.errors.isEmpty ? merged : await _freshRecordsOr(merged);
     if (changed.isEmpty) {
       final errors = outcome.errors.values;
       emit(
         current.copyWith(
+          records: records,
           notice: () => errors.length == 1
               ? StatusChangeRejected(event.to, errors.single)
               : StatusChangeSkipped(event.to, event.ids.length),
@@ -83,12 +88,22 @@ final class ApplicationsBoardBloc extends Bloc<ApplicationsBoardEvent, Applicati
       );
       return;
     }
-    final byId = {for (final record in changed) record.id: record};
     emit(
       current.copyWith(
-        records: [for (final record in current.records) byId[record.id] ?? record],
+        records: records,
         notice: () => StatusChanged(event.to, changed: changed.length, skipped: event.ids.length - changed.length),
       ),
     );
+  }
+
+  Future<List<ApplicationRecord>> _freshRecordsOr(List<ApplicationRecord> fallback) async {
+    try {
+      return switch (await getAllApplications(staff)) {
+        Success(:final value) when value.isNotEmpty => value,
+        _ => fallback,
+      };
+    } on Exception {
+      return fallback;
+    }
   }
 }

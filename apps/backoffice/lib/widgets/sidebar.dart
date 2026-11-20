@@ -1,9 +1,9 @@
+import 'package:blocs/blocs.dart';
 import 'package:domain/domain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui/ui.dart';
 
-import '../dependencies.dart';
 import 'theme_toggle.dart';
 
 class Sidebar extends StatelessWidget {
@@ -15,7 +15,7 @@ class Sidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final staff = context.read<BackofficeDependencies>().staff;
+    final staff = context.read<User>();
     final role = switch (staff.role) {
       UserRole.employer => 'Poslodavac',
       UserRole.staff || UserRole.student => 'Referent zadruge',
@@ -63,12 +63,14 @@ class Sidebar extends StatelessWidget {
           const SizedBox(height: 12),
           Divider(color: theme.jobly.separator),
           const SizedBox(height: 12),
-          if (compact)
+          if (compact) ...[
             Tooltip(
               message: '${staff.fullName} · ${role.toLowerCase()}',
               child: InitialsAvatar(name: staff.fullName, size: 36),
-            )
-          else
+            ),
+            const SizedBox(height: 8),
+            const _LogOutButton(),
+          ] else
             Row(
               children: [
                 InitialsAvatar(name: staff.fullName, size: 36),
@@ -82,10 +84,24 @@ class Sidebar extends StatelessWidget {
                     ],
                   ),
                 ),
+                const _LogOutButton(),
               ],
             ),
         ],
       ),
+    );
+  }
+}
+
+class _LogOutButton extends StatelessWidget {
+  const _LogOutButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      tooltip: 'Odjavi se',
+      icon: const Icon(Icons.logout_rounded),
+      onPressed: () => context.read<SessionBloc>().add(const SessionLogOutRequested()),
     );
   }
 }

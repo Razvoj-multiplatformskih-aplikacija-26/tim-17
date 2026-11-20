@@ -21,7 +21,7 @@ class ApplicationDetailScreen extends StatelessWidget {
         content: Text(switch (notice) {
           ApplicationWithdrawn() => 'Prijava je povučena.',
           WithdrawRejected(:final error) => error.message,
-          WithdrawFailed() => 'Prijava nije povučena. Proveri internet vezu i pokušaj ponovo.',
+          WithdrawFailed(:final cause) => 'Prijava nije povučena. ${actionFailureMessage(cause)}',
         }),
       ),
     );
@@ -51,7 +51,8 @@ class ApplicationDetailScreen extends StatelessWidget {
         listener: (context, state) => _onNotice(context, (state as MyApplicationsLoaded).notice!),
         builder: (context, state) => switch (state) {
           MyApplicationsLoading() => const LoadingView(),
-          MyApplicationsFailure() => FailureView(
+          MyApplicationsFailure(:final cause) => FailureView(
+            cause: cause,
             onRetry: () => context.read<MyApplicationsBloc>().add(const MyApplicationsRetried()),
           ),
           MyApplicationsEmpty() => const _NotFound(),
