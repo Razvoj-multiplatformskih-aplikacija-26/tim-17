@@ -90,113 +90,126 @@ class _JobsScreenState extends State<JobsScreen> {
     _apply(JobFilters(sort: _filters.sort));
   }
 
+  Future<void> _refresh() {
+    final refresh = JobsRefreshed();
+    context.read<JobsBloc>().add(refresh);
+    context.read<MyApplicationsBloc>().add(MyApplicationsRefreshed());
+    return refresh.handled;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<JobsBloc, JobsState>(
-        builder: (context, state) {
-          const header = [
-            JoblyTopBar(),
-            SliverToBoxAdapter(
-              child: LargeTitle(title: 'Pronađi posao', subtitle: 'Studentski i omladinski poslovi'),
-            ),
-          ];
+      body: RefreshIndicator(
+        onRefresh: _refresh,
+        child: BlocBuilder<JobsBloc, JobsState>(
+          builder: (context, state) {
+            const header = [
+              JoblyTopBar(),
+              SliverToBoxAdapter(
+                child: LargeTitle(title: 'Pronađi posao', subtitle: 'Studentski i omladinski poslovi'),
+              ),
+            ];
 
-          switch (state) {
-            case JobsLoading():
-              return const CustomScrollView(
-                slivers: [
-                  ...header,
-                  SliverFillRemaining(child: LoadingView()),
-                ],
-              );
-            case JobsFailure():
-              return CustomScrollView(
-                slivers: [
-                  ...header,
-                  SliverFillRemaining(
-                    child: FailureView(onRetry: () => context.read<JobsBloc>().add(const JobsRetried())),
-                  ),
-                ],
-              );
-            case JobsReady():
-              final filters = state.filters;
-              final jobs = switch (state) {
-                JobsLoaded(:final visible) => visible,
-                JobsEmpty() => const <JobPosting>[],
-              };
-              return CustomScrollView(
-                slivers: [
-                  ...header,
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-                      child: JobSearchField(
-                        controller: _search,
-                        onChanged: (query) => _apply(filters.copyWith(query: query)),
-                      ),
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: CategoryStories(
-                      selected: filters.categories,
-                      onToggle: (category) =>
-                          _apply(filters.copyWith(categories: _toggled(filters.categories, category))),
-                    ),
-                  ),
-                  SliverPersistentHeader(
-                    pinned: true,
-                    delegate: PinnedFrostedBar(
-                      child: _FilterBar(
-                        filters: filters,
-                        onAll: _openAllFilters,
-                        onCities: _pickCities,
-                        onShifts: _pickShifts,
-                        onPayTypes: _pickPayTypes,
-                      ),
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _ResultsRow(count: jobs.length, sort: filters.sort, onSort: _pickSort),
-                  ),
-                  if (filters.hasActiveFilters)
-                    SliverToBoxAdapter(
-                      child: _ActiveFilters(filters: filters, onChanged: _apply, onClearAll: _clearAll),
-                    ),
-                  if (state is JobsEmpty)
+            switch (state) {
+              case JobsLoading():
+                return const CustomScrollView(
+                  slivers: [
+                    ...header,
+                    SliverFillRemaining(child: LoadingView()),
+                  ],
+                );
+              case JobsFailure(:final cause):
+                return CustomScrollView(
+                  slivers: [
+                    ...header,
                     SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
-                        child: state.isFiltered
-                            ? EmptyView(
-                                icon: Icons.search_off_rounded,
-                                title: 'Nema oglasa za ovu pretragu',
-                                message: 'Probaj sa drugim gradom, smenom ili satnicom.',
-                                action: OutlinedButton(onPressed: _clearAll, child: const Text('Poništi filtere')),
-                              )
-                            : const EmptyView(
-                                icon: Icons.work_outline_rounded,
-                                title: 'Oglasi stižu uskoro',
-                                message: 'Trenutno nema otvorenih oglasa. Svrati ponovo malo kasnije.',
-                              ),
+                      child: FailureView(
+                        cause: cause,
+                        onRetry: () => context.read<JobsBloc>().add(const JobsRetried()),
                       ),
-                    )
-                  else
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final job = jobs[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                          child: JobCard(job: job, onTap: () => context.push('/jobs/${job.id.value}')),
-                        );
-                      }, childCount: jobs.length),
                     ),
-                  SliverToBoxAdapter(child: SizedBox(height: 24 + MediaQuery.paddingOf(context).bottom)),
-                ],
-              );
-          }
-        },
+                  ],
+                );
+              case JobsReady():
+                final filters = state.filters;
+                final jobs = switch (state) {
+                  JobsLoaded(:final visible) => visible,
+                  JobsEmpty() => const <JobPosting>[],
+                };
+                return CustomScrollView(
+                  slivers: [
+                    ...header,
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+                        child: JobSearchField(
+                          controller: _search,
+                          onChanged: (query) => _apply(filters.copyWith(query: query)),
+                        ),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: CategoryStories(
+                        selected: filters.categories,
+                        onToggle: (category) =>
+                            _apply(filters.copyWith(categories: _toggled(filters.categories, category))),
+                      ),
+                    ),
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: PinnedFrostedBar(
+                        child: _FilterBar(
+                          filters: filters,
+                          onAll: _openAllFilters,
+                          onCities: _pickCities,
+                          onShifts: _pickShifts,
+                          onPayTypes: _pickPayTypes,
+                        ),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: _ResultsRow(count: jobs.length, sort: filters.sort, onSort: _pickSort),
+                    ),
+                    if (filters.hasActiveFilters)
+                      SliverToBoxAdapter(
+                        child: _ActiveFilters(filters: filters, onChanged: _apply, onClearAll: _clearAll),
+                      ),
+                    if (state is JobsEmpty)
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+                          child: state.isFiltered
+                              ? EmptyView(
+                                  icon: Icons.search_off_rounded,
+                                  title: 'Nema oglasa za ovu pretragu',
+                                  message: 'Probaj sa drugim gradom, smenom ili satnicom.',
+                                  action: OutlinedButton(onPressed: _clearAll, child: const Text('Poništi filtere')),
+                                )
+                              : const EmptyView(
+                                  icon: Icons.work_outline_rounded,
+                                  title: 'Oglasi stižu uskoro',
+                                  message: 'Trenutno nema otvorenih oglasa. Svrati ponovo malo kasnije.',
+                                ),
+                        ),
+                      )
+                    else
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final job = jobs[index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                            child: JobCard(job: job, onTap: () => context.push('/jobs/${job.id.value}')),
+                          );
+                        }, childCount: jobs.length),
+                      ),
+                    SliverToBoxAdapter(child: SizedBox(height: 24 + MediaQuery.paddingOf(context).bottom)),
+                  ],
+                );
+            }
+          },
+        ),
       ),
     );
   }

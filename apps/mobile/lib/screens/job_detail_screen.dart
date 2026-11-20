@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ui/ui.dart';
 
-import '../dependencies.dart';
 import '../models/job_filters.dart';
 import '../widgets/info_row.dart';
 
@@ -21,7 +20,10 @@ class JobDetailScreen extends StatelessWidget {
       body: BlocBuilder<JobsBloc, JobsState>(
         builder: (context, state) => switch (state) {
           JobsLoading() => const LoadingView(),
-          JobsFailure() => FailureView(onRetry: () => context.read<JobsBloc>().add(const JobsRetried())),
+          JobsFailure(:final cause) => FailureView(
+            cause: cause,
+            onRetry: () => context.read<JobsBloc>().add(const JobsRetried()),
+          ),
           JobsReady() => switch (state.find(id)) {
             null => const EmptyView(
               icon: Icons.search_off_rounded,
@@ -44,14 +46,16 @@ class _JobDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final studentId = context.read<AppDependencies>().studentId;
+    final studentId = context.read<MyApplicationsBloc>().student?.id;
     final applications = context.select<MyApplicationsBloc, List<ApplicationRecord>>(
       (bloc) => switch (bloc.state) {
         MyApplicationsLoaded(:final applications) => applications,
         _ => const [],
       },
     );
-    final existing = applicationFor(studentId, job.id, [for (final r in applications) r.application]);
+    final existing = studentId == null
+        ? null
+        : applicationFor(studentId, job.id, [for (final r in applications) r.application]);
 
     return ListView(
       padding: EdgeInsets.fromLTRB(20, 8, 20, 32 + MediaQuery.paddingOf(context).bottom),

@@ -129,4 +129,46 @@ void main() {
     expect(state.notice, isA<ApplicationFailed>().having((n) => n.cause, 'cause', isA<RepositoryException>()));
     await bloc.close();
   });
+
+  test('odbijena prijava ponovo učitava oglase', () async {
+    final jobs = seeded();
+    final bloc = build(jobs)..add(const JobsRequested());
+    await bloc.stream.firstWhere((s) => s is JobsLoaded);
+    jobs.replaceJob(job('j1', status: JobStatus.closed));
+    bloc.add(ApplyRequested(const JobPostingId('j1'), letter()));
+    final state = await bloc.stream.firstWhere((s) => s is JobsReady && s.notice != null) as JobsReady;
+    expect(state.notice, const ApplicationRejected(JobPostingId('j1'), JobClosed()));
+    expect(state.find(const JobPostingId('j1'))?.status, JobStatus.closed);
+    await bloc.close();
+  });
+
+  test('oglasi se učitavaju tek kada se student prijavi', () async {
+    final jobs = seeded();
+    final bloc = JobsBloc(
+      getJobs: GetJobs(jobs: jobs),
+      applyForJob: ApplyForJob(jobs: jobs, applications: jobs, records: recordsOf(jobs), clock: FixedClock(now)),
+    )..add(const JobsRequested());
+    await Future<void>.delayed(Duration.zero);
+    expect(bloc.state, isA<JobsLoading>());
+    bloc.add(const JobsStudentChanged(student));
+    await bloc.stream.firstWhere((s) => s is JobsLoaded);
+    expect(bloc.student, student);
+    await bloc.close();
+  });
+
+  test('osvežavanje donosi nove oglase bez stanja učitavanja', () async {
+    final jobs = seeded();
+    final bloc = build(jobs);
+    await loaded(bloc);
+    jobs.replaceJob(job('j1', status: JobStatus.closed));
+    final states = <JobsState>[];
+    final subscription = bloc.stream.listen(states.add);
+    final refresh = JobsRefreshed();
+    bloc.add(refresh);
+    await refresh.handled;
+    await subscription.cancel();
+    expect(states.whereType<JobsLoading>(), isEmpty);
+    expect((bloc.state as JobsReady).find(const JobPostingId('j1'))?.status, JobStatus.closed);
+    await bloc.close();
+  });
 }

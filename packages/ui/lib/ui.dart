@@ -1,5 +1,6 @@
 export 'src/jobly_colors.dart';
 export 'src/text/domain_errors.dart';
+export 'src/text/failures.dart';
 export 'src/text/serbian.dart';
 export 'src/theme.dart';
 export 'src/widgets/chips.dart';
@@ -7,5 +8,6 @@ export 'src/widgets/frosted.dart';
 export 'src/widgets/gradient_button.dart';
 export 'src/widgets/initials_avatar.dart';
 export 'src/widgets/jobly_wordmark.dart';
+export 'src/widgets/login_screen.dart';
 export 'src/widgets/state_views.dart';
 export 'src/widgets/status_badge.dart';

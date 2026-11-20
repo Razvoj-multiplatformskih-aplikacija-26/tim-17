@@ -6,11 +6,17 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:ui/ui.dart';
 
 import 'app.dart';
+import 'data/secure_token_store.dart';
 import 'dependencies.dart';
+import 'server_address.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting(serbianLatin);
   if (kDebugMode) Bloc.observer = ConsoleBlocObserver(debugPrint);
-  runApp(JoblyApp(dependencies: AppDependencies.fake()));
+  runApp(
+    JoblyApp(
+      dependencies: AppDependencies.server(baseUri: serverAddress(), tokens: const SecureTokenStore()),
+    ),
+  );
 }

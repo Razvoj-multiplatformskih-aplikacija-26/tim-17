@@ -16,7 +16,14 @@ final class MyApplicationsRetried extends MyApplicationsEvent {
 }
 
 final class MyApplicationsRefreshed extends MyApplicationsEvent {
-  const MyApplicationsRefreshed();
+  MyApplicationsRefreshed();
+
+  final _handled = Completer<void>();
+
+  Future<void> get handled => _handled.future;
+
+  @override
+  List<Object?> get props => [_handled];
 }
 
 final class MyApplicationsFilterChanged extends MyApplicationsEvent {
@@ -39,4 +46,13 @@ final class WithdrawRequested extends MyApplicationsEvent {
 
 final class MyApplicationsNoticeAcknowledged extends MyApplicationsEvent {
   const MyApplicationsNoticeAcknowledged();
+}
+
+final class MyApplicationsStudentChanged extends MyApplicationsEvent {
+  const MyApplicationsStudentChanged(this.student);
+
+  final User? student;
+
+  @override
+  List<Object?> get props => [student];
 }

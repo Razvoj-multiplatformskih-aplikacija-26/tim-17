@@ -77,6 +77,11 @@ final class InMemoryJobBoard implements JobPostingRepository, ApplicationReposit
   int saves = 0;
   DomainError? rejectNextCreate;
 
+  void replaceJob(JobPosting job) => _jobs[_jobs.indexWhere((j) => j.id == job.id)] = job;
+
+  void replaceApplication(JobApplication application) =>
+      applications[applications.indexWhere((a) => a.id == application.id)] = application;
+
   Future<void> _roundTrip() async {
     if (failingRequests > 0) {
       failingRequests--;

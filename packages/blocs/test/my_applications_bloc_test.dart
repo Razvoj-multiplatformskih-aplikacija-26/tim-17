@@ -126,4 +126,39 @@ void main() {
           .having((s) => s.notice, 'notice', isA<WithdrawFailed>()),
     ],
   );
+
+  test('odbijeno povlačenje ponovo učitava prijave', () async {
+    final jobs = seeded();
+    final bloc = build(jobs)..add(const MyApplicationsRequested());
+    await bloc.stream.firstWhere((s) => s is MyApplicationsLoaded);
+    jobs.replaceApplication(application('a1', 'j1', status: ApplicationStatus.rejected));
+    bloc.add(const WithdrawRequested(JobApplicationId('a1')));
+    final state =
+        await bloc.stream.firstWhere((s) => s is MyApplicationsLoaded && s.notice != null) as MyApplicationsLoaded;
+    expect(state.notice, isA<WithdrawRejected>());
+    expect(state.find(const JobApplicationId('a1'))?.status, ApplicationStatus.rejected);
+    await bloc.close();
+  });
+
+  test('promena studenta učitava njegove prijave', () async {
+    final jobs = seeded();
+    final bloc = build(jobs);
+    await loaded(bloc);
+    bloc.add(const MyApplicationsStudentChanged(other));
+    final state = await bloc.stream.firstWhere((s) => s is MyApplicationsLoaded) as MyApplicationsLoaded;
+    expect([for (final r in state.applications) r.id.value], ['a3']);
+    await bloc.close();
+  });
+
+  test('osvežavanje javlja kada je završeno', () async {
+    final jobs = seeded();
+    final bloc = build(jobs);
+    await loaded(bloc);
+    jobs.replaceApplication(application('a1', 'j1', status: ApplicationStatus.accepted));
+    final refresh = MyApplicationsRefreshed();
+    bloc.add(refresh);
+    await refresh.handled;
+    expect((bloc.state as MyApplicationsLoaded).find(const JobApplicationId('a1'))?.status, ApplicationStatus.accepted);
+    await bloc.close();
+  });
 }

@@ -67,7 +67,7 @@ void main() {
     setUp(() => dependencies = AppDependencies.fake(clock: clock, latency: Duration.zero));
 
     Future<Result<ApplicationRecord>> apply(String jobId) =>
-        dependencies.applyForJob(jobId: JobPostingId(jobId), by: dependencies.student, letter: letter());
+        dependencies.applyForJob(jobId: JobPostingId(jobId), by: AppDependencies.demoStudent, letter: letter());
 
     test('prijava prolazi kroz pravila iz domena', () async {
       expect(await apply('job-1'), const Failure<ApplicationRecord>(AlreadyApplied()));
@@ -82,20 +82,20 @@ void main() {
     });
 
     test('povlačenje menja stanje, a zapis ostaje', () async {
-      final before = await dependencies.getMyApplications(dependencies.student);
+      final before = await dependencies.getMyApplications(AppDependencies.demoStudent);
       final result = await dependencies.withdrawApplication(
         id: const JobApplicationId('app-1'),
-        by: dependencies.student,
+        by: AppDependencies.demoStudent,
       );
       expect(result.valueOrNull?.status, ApplicationStatus.withdrawn);
-      final after = await dependencies.getMyApplications(dependencies.student);
+      final after = await dependencies.getMyApplications(AppDependencies.demoStudent);
       expect(after.length, before.length);
     });
 
     test('student ne može da povuče tuđu prijavu', () async {
       final result = await dependencies.withdrawApplication(
         id: const JobApplicationId('app-11'),
-        by: dependencies.student,
+        by: AppDependencies.demoStudent,
       );
       expect(result, const Failure<ApplicationRecord>(NotAllowed()));
     });

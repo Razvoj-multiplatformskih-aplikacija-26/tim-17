@@ -25,6 +25,11 @@ class JoblyTopBar extends StatelessWidget {
           onPressed: () => context.read<ThemeModeCubit>().toggle(brightness),
         ),
         if (context.read<AppDependencies>().fakeJobBoard != null) const _DemoMenu(),
+        IconButton(
+          tooltip: 'Odjavi se',
+          icon: const Icon(Icons.logout_rounded),
+          onPressed: () => context.read<SessionBloc>().add(const SessionLogOutRequested()),
+        ),
         const SizedBox(width: 8),
       ],
     );
