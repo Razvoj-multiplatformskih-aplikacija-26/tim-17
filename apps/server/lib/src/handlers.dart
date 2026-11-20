@@ -73,8 +73,8 @@ final class JobBoardHandlers {
 
   Future<Response> apply(Request request) async {
     final actor = _actor(request);
-    final body = NewApplicationDto.fromJson(await readObject(request));
     if (!AccessPolicy.canApply(actor)) return problem(const NotAllowed());
+    final body = NewApplicationDto.fromJson(await readObject(request));
     final letter = MotivationLetter.parse(body.letter);
     if (letter case Failure(:final error)) return problem(error);
     final created = await _applyForJob(jobId: JobPostingId(body.jobId), by: actor, letter: letter.valueOrNull!);
@@ -86,8 +86,8 @@ final class JobBoardHandlers {
 
   Future<Response> changeStatus(Request request) async {
     final actor = _actor(request);
-    final body = StatusChangeDto.fromJson(await readObject(request));
     if (!AccessPolicy.canReview(actor)) return problem(const NotAllowed());
+    final body = StatusChangeDto.fromJson(await readObject(request));
     final to = applicationStatusFromDto(body.to);
     final outcome = await _changeApplicationStatus(
       ids: {for (final id in body.ids) JobApplicationId(id)},
